@@ -24,6 +24,8 @@ export interface Station {
   /** Was das Kind dabei übt — nur für Erwachsene sichtbar. */
   lernziel: string;
   intro: LineId;
+  /** Der Satz aus dem Buch, mit dem die Station endet. */
+  abschluss: LineId;
   /** Himmelsfarben für diese Tageszeit (oben, unten). */
   himmel: [string, string];
 }
@@ -36,6 +38,7 @@ export const STATIONS: Station[] = [
     sticker: "☀️",
     lernziel: "Ursache und Wirkung",
     intro: "s01-intro",
+    abschluss: "s01-fertig",
     himmel: ["#2b3f6b", "#f0a868"],
   },
   {
@@ -45,6 +48,7 @@ export const STATIONS: Station[] = [
     sticker: "👕",
     lernziel: "Zuordnen und Farben",
     intro: "s02-intro",
+    abschluss: "s02-fertig",
     himmel: ["#7fa8d8", "#ffd9a0"],
   },
   {
@@ -54,6 +58,7 @@ export const STATIONS: Station[] = [
     sticker: "🍓",
     lernziel: "Zählen bis 5",
     intro: "s03-intro",
+    abschluss: "s03-fertig",
     himmel: ["#8fbce8", "#ffe6b8"],
   },
   {
@@ -63,6 +68,7 @@ export const STATIONS: Station[] = [
     sticker: "🧱",
     lernziel: "Zählen und Feinmotorik",
     intro: "s04-intro",
+    abschluss: "s04-fertig",
     himmel: ["#9ccbec", "#ffeecb"],
   },
   {
@@ -72,6 +78,7 @@ export const STATIONS: Station[] = [
     sticker: "🧸",
     lernziel: "Sortieren nach Kategorien",
     intro: "s05-intro",
+    abschluss: "s05-fertig",
     himmel: ["#a8d4f0", "#fff2d8"],
   },
   {
@@ -81,6 +88,7 @@ export const STATIONS: Station[] = [
     sticker: "🌼",
     lernziel: "Geduld und Ausdauer",
     intro: "s06-intro",
+    abschluss: "s06-fertig",
     himmel: ["#a8d4f0", "#ffeed0"],
   },
   {
@@ -90,6 +98,7 @@ export const STATIONS: Station[] = [
     sticker: "🍪",
     lernziel: "Reihenfolge und Formen",
     intro: "s07-intro",
+    abschluss: "s07-fertig",
     himmel: ["#9fcbe8", "#ffe3bc"],
   },
   {
@@ -99,6 +108,7 @@ export const STATIONS: Station[] = [
     sticker: "👢",
     lernziel: "Rhythmus und Timing",
     intro: "s08-intro",
+    abschluss: "s08-fertig",
     himmel: ["#8296a8", "#c8d4dc"],
   },
   {
@@ -108,6 +118,7 @@ export const STATIONS: Station[] = [
     sticker: "🐑",
     lernziel: "Zählen bis 10",
     intro: "s09-intro",
+    abschluss: "s09-fertig",
     himmel: ["#8fc0e0", "#ffe0b0"],
   },
   {
@@ -117,6 +128,7 @@ export const STATIONS: Station[] = [
     sticker: "🦋",
     lernziel: "Farben zuordnen",
     intro: "s10-intro",
+    abschluss: "s10-fertig",
     himmel: ["#f0b070", "#ffd8a0"],
   },
   {
@@ -126,6 +138,7 @@ export const STATIONS: Station[] = [
     sticker: "⭐",
     lernziel: "Zur Ruhe kommen",
     intro: "s11-intro",
+    abschluss: "s11-fertig",
     himmel: ["#141c38", "#3c4a78"],
   },
 ];
