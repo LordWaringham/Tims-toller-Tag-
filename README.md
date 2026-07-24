@@ -43,14 +43,25 @@ verlieren mag.
 ## Eigene Stimme einsprechen
 
 Standardmäßig liest die deutsche Stimme des Geräts vor. Alle 73 Sätze können
-durch echte Aufnahmen ersetzt werden:
+durch echte Aufnahmen ersetzt werden — am einfachsten über das eingebaute
+**Aufnahmestudio unter [`/aufnahme`](https://tims-toller-tag.vercel.app/aufnahme)**
+(auch erreichbar über *Für Erwachsene* auf dem Titelbild):
 
-1. Satz aufnehmen — das Diktiergerät vom Handy reicht.
-2. Datei nach der ID des Satzes benennen und in `public/audio/` legen,
-   z. B. `s03-erdbeeren.mp3`. Erlaubt sind `.mp3`, `.m4a`, `.wav`, `.ogg`,
-   `.webm` und `.aac`.
-3. `npm run build` — die Liste der vorhandenen Aufnahmen entsteht dabei von
-   selbst.
+1. Alle Sätze stehen dort untereinander, jeder mit einem Aufnahmeknopf.
+   Eingesprochen wird direkt im Browser, auch am Handy.
+2. Jede Aufnahme lässt sich sofort anhören und beliebig oft neu machen. Die
+   Aufnahmen liegen in IndexedDB — das Fenster darf zwischendurch zu sein.
+3. **Alle herunterladen** liefert ein ZIP mit fertig benannten Dateien.
+4. Den Inhalt des ZIPs nach `public/audio/` hochladen (auf GitHub:
+   *Add file → Upload files*). Der nächste Build übernimmt sie automatisch.
+
+Von Hand geht es auch: Datei nach der ID des Satzes benennen und in
+`public/audio/` legen, z. B. `s03-erdbeeren.mp3`. Erlaubt sind `.mp3`, `.m4a`,
+`.wav`, `.ogg`, `.webm` und `.aac`.
+
+Ein Hinweis zur Reihenfolge: Die Sätze unter *Allgemein* und die Zahlen kommen
+in **allen** Stationen vor. Wer nur einen Teil einspricht, sollte mit diesen 21
+anfangen — sonst wechselt die Stimme mitten im Spiel ständig.
 
 Die vollständige Liste mit Dateinamen und Text steht in
 **[SPRECHTEXTE.md](SPRECHTEXTE.md)**. Es müssen nicht alle Sätze sein: für jeden
