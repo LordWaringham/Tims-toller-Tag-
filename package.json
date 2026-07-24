@@ -1,0 +1,31 @@
+{
+  "name": "tims-toller-tag",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "node scripts/audio-manifest.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "sprechtexte": "node scripts/sprechtexte.mjs",
+    "audio": "node scripts/audio-manifest.mjs"
+  },
+  "dependencies": {
+    "motion": "^12.42.2",
+    "next": "16.2.11",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.11",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "description": "Mitmachspiel nach dem Bilderbuch Tims toller Tag"
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Tims toller Tag",
+  "short_name": "Tims Tag",
+  "description": "Ein Mitmachspiel nach dem Bilderbuch „Tims toller Tag“ — für Kinder ab 4 Jahren.",
+  "lang": "de",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#fdf6ec",
+  "theme_color": "#fdf6ec",
+  "categories": ["education", "kids", "games"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

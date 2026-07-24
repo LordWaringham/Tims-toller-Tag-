@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+@theme {
+  /* Farben aus dem Buch */
+  --color-creme: #fdf6ec;
+  --color-himmelblau: #a9d4e5;
+  --color-himmelblau-tief: #7cb8d0;
+  --color-buchtext: #5f6b5c;
+  --color-tim: #e8622a;
+  --color-tim-hell: #f79b5c;
+  --color-wiese: #7fb03c;
+  --color-wiese-tief: #5a8c28;
+  --color-jeans: #3e6c9e;
+  --color-nacht: #1b2545;
+
+  --font-rund: var(--font-fredoka), system-ui, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  background: var(--color-creme);
+  color: var(--color-buchtext);
+  font-family: var(--font-rund);
+  /* Kinder wischen und tippen wild — nichts soll aus Versehen markiert werden. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/*
+ * Die Bühne: ein Bereich mit festem Seitenverhältnis, der sich in jedes
+ * Fenster einpasst. Alle Spielelemente werden in Prozent positioniert und in
+ * cqw-Einheiten bemessen, damit sie auf jedem Gerät gleich sitzen.
+ */
+.buehne {
+  container-type: inline-size;
+  position: relative;
+  width: min(100vw, calc(100dvh * 4 / 3));
+  aspect-ratio: 4 / 3;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+/*
+ * Positionierung und Animation werden getrennt: die Hülle sitzt an ihrem Platz,
+ * das bewegte Element darin animiert.
+ *
+ * Grund: Motion verwaltet `transform` selbst, sobald etwas animiert wird — ein
+ * `translate(-50%, -50%)` am selben Element wird dabei überschrieben, und alles
+ * sitzt um seine halbe Größe verschoben.
+ */
+.huelle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+/* Große, kinderfreundliche Tippfläche um kleine Grafiken herum. */
+.tippflaeche {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.tippflaeche::after {
+  /* unsichtbare Vergrößerung des Trefferbereichs */
+  content: "";
+  position: absolute;
+  inset: -3cqw;
+  border-radius: 9999px;
+}
+
+/* Sanftes Pulsieren als Hinweis, wenn das Kind zögert. */
+@keyframes tipp-hinweis {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+.hinweis {
+  animation: tipp-hinweis 1.4s ease-in-out infinite;
+}
+
+@keyframes hinweis-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.hinweis-ring {
+  position: absolute;
+  inset: -1cqw;
+  border-radius: 9999px;
+  border: 0.6cqw solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 2cqw rgba(255, 255, 255, 0.6);
+  animation: hinweis-ring 1.6s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes schweben {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.2cqw);
+  }
+}
+
+.schwebt {
+  animation: schweben 3s ease-in-out infinite;
+}
+
+/* Wer Bewegung nicht mag, bekommt sie auch nicht. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.textschatten {
+  text-shadow:
+    0 0.2cqw 0 rgba(255, 255, 255, 0.85),
+    0 0.6cqw 1.6cqw rgba(0, 0, 0, 0.18);
+}
