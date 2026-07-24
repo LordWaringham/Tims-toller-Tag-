@@ -6,7 +6,7 @@
  * ob es etwas Neues gibt (stale-while-revalidate).
  */
 
-const CACHE = "tims-toller-tag-v1";
+const CACHE = "tims-toller-tag-v2";
 
 /** Die Buchbilder und Symbole vorab laden — sie ändern sich nie. */
 const VORAB = [
@@ -38,6 +38,37 @@ self.addEventListener("install", (event) => {
   );
 });
 
+/**
+ * Die Sprachaufnahmen hinterher ablegen.
+ *
+ * Sie sind der Grund, warum das Spiel überhaupt spricht — ohne sie wäre es
+ * offline stumm. Welche es gibt, steht im Manifest, das beim Bauen entsteht.
+ * Bewusst nach dem Aktivieren und Datei für Datei: Es sind einige Megabyte,
+ * und eine einzelne fehlende Aufnahme darf nicht alles scheitern lassen.
+ */
+async function aufnahmenAblegen() {
+  try {
+    const cache = await caches.open(CACHE);
+    const antwort = await fetch("/audio/manifest.json", { cache: "no-cache" });
+    if (!antwort.ok) return;
+    await cache.put("/audio/manifest.json", antwort.clone());
+    const manifest = await antwort.json();
+
+    for (const datei of Object.values(manifest)) {
+      const pfad = `/audio/${datei}`;
+      try {
+        if (await cache.match(pfad)) continue;
+        const a = await fetch(pfad);
+        if (a.ok) await cache.put(pfad, a);
+      } catch {
+        /* eine fehlende Aufnahme ist kein Grund aufzugeben */
+      }
+    }
+  } catch {
+    /* ohne Netz eben beim nächsten Start */
+  }
+}
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -45,7 +76,8 @@ self.addEventListener("activate", (event) => {
       .then((namen) =>
         Promise.all(namen.filter((n) => n !== CACHE).map((n) => caches.delete(n))),
       )
-      .then(() => self.clients.claim()),
+      .then(() => self.clients.claim())
+      .then(() => aufnahmenAblegen()),
   );
 });
 
