@@ -17,10 +17,19 @@ const STATION = STATIONS[0];
  */
 export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const [schritt, setSchritt] = useState(0); // 0 Sonne, 1 Teddy, 2 Tim, 3 fertig
+  /**
+   * Der Hinweis oben hinkt dem Bild absichtlich hinterher.
+   *
+   * Beim Antippen gibt es zwei Sätze: die Reaktion („Die Sonne scheint ins
+   * Zimmer") und den nächsten Auftrag („Jetzt wecken wir Teddy"). Würden beide
+   * am selben Zustand hängen, spräche das Spiel sie gleichzeitig. Das Bild
+   * reagiert deshalb sofort, der Hinweis erst, wenn die Reaktion verklungen ist.
+   */
+  const [hinweisSchritt, setHinweisSchritt] = useState(0);
   const [fertig, setFertig] = useState(false);
 
   const saetze: LineId[] = ["s01-intro", "s01-teddy", "s01-tim"];
-  const satz = saetze[Math.min(schritt, 2)];
+  const satz = saetze[Math.min(hinweisSchritt, 2)];
 
   // Der Raum wird mit jedem Schritt heller.
   const helligkeit = [0.42, 0.68, 0.88, 1][Math.min(schritt, 3)];
@@ -30,6 +39,7 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
     ton();
     setSchritt(naechster);
     if (gesagt) await voice.speak(gesagt);
+    setHinweisSchritt(naechster);
     if (naechster === 3) {
       onGeschafft();
       setTimeout(() => setFertig(true), 500);

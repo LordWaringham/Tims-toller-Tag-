@@ -98,7 +98,8 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
       onWeiter={onWeiter}
       onZurueck={onZurueck}
       abschlussSatz="s03-fertig"
-      schleier={0.18}
+      unschaerfe={1.0}
+      schleier={0.42}
     >
       {/* -------------------------------------------------- Spender (links) */}
       {SPENDER.map((spender) => {
@@ -187,16 +188,31 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
         </div>
       </div>
 
-      {/* -------------------------------------------------------- Schüssel */}
+      {/*
+        Eine eigene, leere Schüssel.
+
+        Auf der Buchillustration ist die Schüssel bereits randvoll — das Kind
+        soll sie aber selbst füllen. Deshalb liegt hier eine gezeichnete
+        Schüssel darüber: hinten die Innenseite, dann die Früchte, davor die
+        Vorderwand. So liegen die Früchte sichtbar *in* der Schüssel.
+      */}
+      <div
+        className="huelle pointer-events-none"
+        style={{ left: "50%", top: "76%", width: "62cqw", zIndex: 8 }}
+        aria-hidden
+      >
+        <SchuesselRueckseite />
+      </div>
+
       <Ablage
         id="schuessel"
-        toleranzCqw={8}
+        toleranzCqw={10}
         style={{
           position: "absolute",
           left: "50%",
           top: "66%",
-          width: "50cqw",
-          height: "26cqw",
+          width: "44cqw",
+          height: "15cqw",
           transform: "translate(-50%, -50%)",
           zIndex: 10,
         }}
@@ -209,10 +225,10 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
               style={{
                 left: `${f.x}%`,
                 top: `${f.y}%`,
-                width: "9cqw",
+                width: "8.5cqw",
                 transform: "translate(-50%, -50%)",
               }}
-              initial={{ scale: 0, y: "-8cqw", rotate: 0 }}
+              initial={{ scale: 0, y: "-10cqw", rotate: 0 }}
               animate={{ scale: 1, y: 0, rotate: f.dreh }}
               transition={{ type: "spring", stiffness: 300, damping: 18 }}
             >
@@ -221,7 +237,62 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
           ))}
         </AnimatePresence>
       </Ablage>
+
+      <div
+        className="huelle pointer-events-none"
+        style={{ left: "50%", top: "76%", width: "62cqw", zIndex: 12 }}
+        aria-hidden
+      >
+        <SchuesselVorderseite />
+      </div>
     </StationRahmen>
+  );
+}
+
+/** Innenseite der Schüssel — liegt hinter den Früchten. */
+function SchuesselRueckseite() {
+  return (
+    <svg viewBox="0 0 200 130" className="w-full" aria-hidden>
+      <ellipse cx="100" cy="34" rx="96" ry="26" fill="#2f7d9c" />
+      <ellipse cx="100" cy="35" rx="88" ry="21" fill="#1e5670" />
+      <ellipse cx="100" cy="31" rx="88" ry="21" fill="#26688a" />
+    </svg>
+  );
+}
+
+/** Vorderwand der Schüssel — liegt vor den Früchten. */
+function SchuesselVorderseite() {
+  return (
+    <svg viewBox="0 0 200 130" className="w-full drop-shadow-lg" aria-hidden>
+      <defs>
+        <linearGradient id="schuesselFarbe" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4fa3c4" />
+          <stop offset="70%" stopColor="#2f7d9c" />
+          <stop offset="100%" stopColor="#215d75" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M4 34 A96 26 0 0 0 196 34 C196 92 154 126 100 126 C46 126 4 92 4 34z"
+        fill="url(#schuesselFarbe)"
+      />
+      {/* Glanzlicht */}
+      <path
+        d="M28 56 C34 84 56 104 82 112"
+        fill="none"
+        stroke="rgba(255,255,255,0.3)"
+        strokeWidth="9"
+        strokeLinecap="round"
+      />
+      {/* Rand */}
+      <path
+        d="M4 34 A96 26 0 0 0 196 34"
+        fill="none"
+        stroke="#69b6d4"
+        strokeWidth="4"
+      />
+      {/* Fuß */}
+      <ellipse cx="100" cy="126" rx="34" ry="5" fill="rgba(0,0,0,0.12)" />
+    </svg>
   );
 }
 
@@ -230,8 +301,8 @@ function neueFrucht(art: FruchtArt, key: number): InSchuessel {
   return {
     key,
     art,
-    x: streuIn(key, 11, 14, 86),
-    y: streuIn(key, 12, 30, 76),
+    x: streuIn(key, 11, 12, 88),
+    y: streuIn(key, 12, 22, 78),
     dreh: streuIn(key, 13, -25, 25),
   };
 }

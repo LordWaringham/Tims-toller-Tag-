@@ -20,7 +20,7 @@ export function Elternseite({
       <div className="mx-auto flex max-w-2xl flex-col gap-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold" style={{ color: "#54604f" }}>
-            Für Erwachsene
+            Erläuterungen für Erwachsene
           </h1>
           <button
             type="button"
@@ -59,28 +59,6 @@ export function Elternseite({
               </li>
             ))}
           </ul>
-        </section>
-
-        <section className="rounded-2xl bg-white/70 p-5 text-sm leading-relaxed">
-          <h2 className="mb-2 text-base font-semibold" style={{ color: "#54604f" }}>
-            Eigene Stimme einsprechen
-          </h2>
-          <p>
-            Alle Sätze können mit einer echten Stimme aufgenommen werden — direkt hier im
-            Browser, ohne dass Dateien von Hand benannt werden müssen.
-          </p>
-          <a
-            href="/aufnahme"
-            className="mt-3 inline-block rounded-full px-5 py-2 text-sm font-semibold text-white shadow-sm"
-            style={{ background: "linear-gradient(180deg, #f0813c, #d9541c)" }}
-          >
-            Zum Aufnahmestudio
-          </a>
-          <p className="mt-3 text-xs" style={{ color: "#8b978a" }}>
-            Solange keine Aufnahme vorliegt, liest die deutsche Stimme des Geräts vor. Die
-            Textliste steht auch in{" "}
-            <code className="rounded bg-black/5 px-1.5 py-0.5">SPRECHTEXTE.md</code>.
-          </p>
         </section>
 
         <section className="rounded-2xl bg-white/70 p-5">

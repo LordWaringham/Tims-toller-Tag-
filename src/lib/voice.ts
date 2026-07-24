@@ -16,6 +16,16 @@ let current: HTMLAudioElement | null = null;
 let muted = false;
 let unlocked = false;
 
+/**
+ * Zählt jede Sprechanforderung mit.
+ *
+ * Zwischen dem Aufruf von speak() und dem tatsächlichen Abspielen liegt ein
+ * await (das Manifest wird geladen). Ohne diesen Zähler könnten zwei kurz
+ * hintereinander angeforderte Sätze beide durch dieses Fenster schlüpfen und
+ * gleichzeitig erklingen. Es gewinnt immer der zuletzt angeforderte Satz.
+ */
+let anforderung = 0;
+
 const cache = new Map<string, HTMLAudioElement>();
 const listeners = new Set<(m: boolean) => void>();
 
@@ -91,7 +101,15 @@ export function subscribeMuted(fn: () => void) {
 export const getMutedSnapshot = () => muted;
 export const getMutedServerSnapshot = () => false;
 
-export function stopSpeaking() {
+/**
+ * Bricht das Sprechen ab.
+ *
+ * `auchGeplante` verwirft zusätzlich Sätze, die noch auf das Manifest warten —
+ * nötig beim Verlassen einer Station, damit dort nicht nachträglich noch etwas
+ * herausrutscht.
+ */
+export function stopSpeaking(auchGeplante = false) {
+  if (auchGeplante) anforderung++;
   if (current) {
     current.pause();
     current.currentTime = 0;
@@ -161,28 +179,29 @@ function playRecording(file: string): Promise<void> {
  */
 export async function speak(id: LineId): Promise<void> {
   if (muted) return;
+  const meine = ++anforderung;
   stopSpeaking();
   const text = LINES[id];
   if (!text) return;
+
   const m = await loadManifest();
-  if (muted) return; // könnte sich während des Ladens geändert haben
+  // Während des Ladens kann ein neuer Satz angefordert worden sein — dann
+  // gehört die Stimme ihm, und dieser hier schweigt.
+  if (muted || meine !== anforderung) return;
+
   const file = m[id];
   if (file) return playRecording(file);
-  return speakWithTts(text);
-}
-
-/** Spricht einen freien Text (z. B. eine Zahl beim Mitzählen). */
-export async function speakText(text: string): Promise<void> {
-  if (muted || !text) return;
-  stopSpeaking();
   return speakWithTts(text);
 }
 
 /** Sätze nacheinander, mit kleiner Pause dazwischen. */
 export async function speakSequence(ids: LineId[], gapMs = 250): Promise<void> {
   for (const id of ids) {
+    const vorher = anforderung + 1;
     await speak(id);
-    if (muted) return;
+    // Hat jemand dazwischengefunkt, bricht die ganze Folge ab.
+    if (muted || anforderung !== vorher) return;
     await new Promise((r) => setTimeout(r, gapMs));
+    if (anforderung !== vorher) return;
   }
 }

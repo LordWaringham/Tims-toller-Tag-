@@ -62,7 +62,7 @@ export function StationRahmen({
     void voice.speak(satz);
   }, [satz, fertig]);
 
-  useEffect(() => () => voice.stopSpeaking(), []);
+  useEffect(() => () => voice.stopSpeaking(true), []);
 
   return (
     <Buehne
@@ -77,7 +77,7 @@ export function StationRahmen({
       <button
         type="button"
         onClick={() => {
-          voice.stopSpeaking();
+          voice.stopSpeaking(true);
           onZurueck();
         }}
         aria-label="Zurück zur Übersicht"

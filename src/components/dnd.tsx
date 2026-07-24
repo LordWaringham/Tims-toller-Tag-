@@ -26,8 +26,12 @@ interface Zone {
   el: HTMLElement;
   /** Nimmt diese Zone dieses Element an? */
   akzeptiert?: (ziehId: string) => boolean;
-  /** Zusätzlicher Fangbereich in Pixeln. */
-  toleranz: number;
+  /**
+   * Zusätzlicher Fangbereich in Prozent der Bühnenbreite.
+   * Bewusst nicht in Pixeln: Wird das Tablet gedreht, ändert sich die
+   * Bühnenbreite — ein einmal berechneter Pixelwert wäre danach falsch.
+   */
+  toleranzCqw: number;
 }
 
 interface DropApi {
@@ -56,7 +60,8 @@ export function DropBereich({ children }: { children: ReactNode }) {
     for (const zone of zonen.current.values()) {
       if (zone.akzeptiert && !zone.akzeptiert(ziehId)) continue;
       const z = zone.el.getBoundingClientRect();
-      const t = zone.toleranz;
+      const buehne = zone.el.closest(".buehne") as HTMLElement | null;
+      const t = ((buehne?.clientWidth ?? 800) * zone.toleranzCqw) / 100;
       const innen =
         cx >= z.left - t && cx <= z.right + t && cy >= z.top - t && cy <= z.bottom + t;
       if (!innen) continue;
@@ -112,12 +117,10 @@ export function Ablage({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const buehne = el.closest(".buehne") as HTMLElement | null;
-    const toleranz = ((buehne?.clientWidth ?? 800) * toleranzCqw) / 100;
     return anmelden({
       id,
       el,
-      toleranz,
+      toleranzCqw,
       akzeptiert: (ziehId) => akzeptiertRef.current?.(ziehId) ?? true,
     });
   }, [anmelden, id, toleranzCqw]);

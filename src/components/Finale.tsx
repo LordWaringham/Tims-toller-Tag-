@@ -32,7 +32,7 @@ export function Finale({
   useEffect(() => {
     sfx.nightBell(3);
     void voice.speakSequence(["finale", "finale-stolz"], 400);
-    return () => voice.stopSpeaking();
+    return () => voice.stopSpeaking(true);
   }, []);
 
   return (

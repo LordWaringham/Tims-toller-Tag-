@@ -70,6 +70,26 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Sprachaufnahmen zuerst aus dem Netz holen.
+  //
+  // Wer neue Aufnahmen hochlädt, will sie sofort hören. Mit dem sonst
+  // üblichen "erst Cache, dann nachladen" käme beim ersten Start noch die
+  // alte Liste — und der frisch eingesprochene Satz bliebe stumm.
+  if (url.pathname.startsWith("/audio/")) {
+    event.respondWith(
+      fetch(request)
+        .then((antwort) => {
+          if (antwort && antwort.status === 200) {
+            const kopie = antwort.clone();
+            caches.open(CACHE).then((c) => c.put(request, kopie));
+          }
+          return antwort;
+        })
+        .catch(() => caches.match(request)),
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then((treffer) => {
       const ausDemNetz = fetch(request)

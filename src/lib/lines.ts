@@ -93,7 +93,6 @@ export const LINES = {
 
   // ------------------------------------------------------- 10 · Schmetterlinge
   "s10-intro": "So viele bunte Schmetterlinge! Bring jeden zu seiner Blume.",
-  "s10-erklaerung": "Der Schmetterling mag die Blume mit der gleichen Farbe.",
   "s10-rot": "Der rote Schmetterling sucht die rote Blume.",
   "s10-gelb": "Der gelbe Schmetterling sucht die gelbe Blume.",
   "s10-blau": "Der blaue Schmetterling sucht die blaue Blume.",

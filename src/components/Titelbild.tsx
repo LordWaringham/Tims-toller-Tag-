@@ -20,7 +20,7 @@ export function Titelbild({
     voice.unlockAudio();
     sfx.unlockSfx();
     sfx.chime(4);
-    void voice.speak("willkommen");
+    void voice.speakSequence(["titel", "willkommen"], 350);
     onSpielen();
   };
 
@@ -83,7 +83,7 @@ export function Titelbild({
             className="rounded-full px-[3.5cqw] py-[1.4cqw] text-[2.6cqw] font-medium shadow-sm"
             style={{ background: "rgba(255,255,255,0.8)", color: "#5f6b5c" }}
           >
-            Für Erwachsene
+            Erläuterungen für Erwachsene
           </button>
         </div>
       </div>

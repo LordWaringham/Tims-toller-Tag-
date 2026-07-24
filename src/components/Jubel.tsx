@@ -77,7 +77,10 @@ export function Jubel({
     let abgebrochen = false;
     (async () => {
       await voice.speak(abschlussSatz);
-      if (!abgebrochen) await voice.speak(lob);
+      if (abgebrochen) return;
+      await voice.speak(lob);
+      if (abgebrochen) return;
+      await voice.speak("sticker");
     })();
     return () => {
       abgebrochen = true;

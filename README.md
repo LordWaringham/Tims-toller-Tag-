@@ -42,10 +42,11 @@ verlieren mag.
 
 ## Eigene Stimme einsprechen
 
-Standardmäßig liest die deutsche Stimme des Geräts vor. Alle 73 Sätze können
+Standardmäßig liest die deutsche Stimme des Geräts vor. Alle 72 Sätze können
 durch echte Aufnahmen ersetzt werden — am einfachsten über das eingebaute
-**Aufnahmestudio unter [`/aufnahme`](https://tims-toller-tag.vercel.app/aufnahme)**
-(auch erreichbar über *Für Erwachsene* auf dem Titelbild):
+**Aufnahmestudio unter [`/aufnahme`](https://tims-toller-tag.vercel.app/aufnahme)**.
+Die Seite ist bewusst nicht aus dem Spiel heraus verlinkt; sie wird über die
+Adresse aufgerufen:
 
 1. Alle Sätze stehen dort untereinander, jeder mit einem Aufnahmeknopf.
    Eingesprochen wird direkt im Browser, auch am Handy.
