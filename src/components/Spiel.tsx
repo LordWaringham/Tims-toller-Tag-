@@ -11,6 +11,7 @@ import { Tageskarte } from "./Tageskarte";
 import { Stickerheft } from "./Stickerheft";
 import { Elternseite } from "./Elternseite";
 import { Finale } from "./Finale";
+import { Querformat } from "./Querformat";
 import type { StationProps } from "./StationRahmen";
 
 import { Aufwachen } from "@/stationen/Aufwachen";
@@ -76,7 +77,9 @@ export function Spiel() {
   const Station = aktuell ? SPIELE[aktuell] : null;
 
   return (
-    <AnimatePresence mode="wait">
+    <>
+      <Querformat />
+      <AnimatePresence mode="wait">
       <motion.main
         key={`${ansicht}-${aktuell ?? ""}-${lauf}`}
         initial={{ opacity: 0 }}
@@ -126,7 +129,8 @@ export function Spiel() {
         {ansicht === "finale" && (
           <Finale onKarte={() => setAnsicht("karte")} onNochmal={nochmal} />
         )}
-      </motion.main>
-    </AnimatePresence>
+        </motion.main>
+      </AnimatePresence>
+    </>
   );
 }
