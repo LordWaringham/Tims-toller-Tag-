@@ -36,6 +36,7 @@ export function StationRahmen({
   dunkel = false,
   weiterText,
   abschlussSatz,
+  onSatzGesprochen,
 }: {
   station: Station;
   /** Der Satz, der gerade oben steht. */
@@ -51,15 +52,28 @@ export function StationRahmen({
   dunkel?: boolean;
   weiterText?: string;
   abschlussSatz: LineId;
+  /** Wird aufgerufen, sobald ein Hinweis zu Ende vorgelesen ist. */
+  onSatzGesprochen?: (satz: LineId) => void;
 }) {
   const gesprochen = useRef<LineId | null>(null);
+  // Über eine Ref, damit ein neuer Rückruf den Satz nicht erneut auslöst.
+  const fertigGesprochenRef = useRef(onSatzGesprochen);
+  useEffect(() => {
+    fertigGesprochenRef.current = onSatzGesprochen;
+  });
 
   // Jeder neue Hinweis wird einmal vorgelesen.
   useEffect(() => {
     if (!satz || fertig) return;
     if (gesprochen.current === satz) return;
     gesprochen.current = satz;
-    void voice.speak(satz);
+    let abgebrochen = false;
+    void voice.speak(satz).then(() => {
+      if (!abgebrochen) fertigGesprochenRef.current?.(satz);
+    });
+    return () => {
+      abgebrochen = true;
+    };
   }, [satz, fertig]);
 
   useEffect(() => () => voice.stopSpeaking(true), []);

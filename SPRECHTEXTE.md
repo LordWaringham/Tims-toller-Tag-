@@ -13,7 +13,7 @@ und heißt genau wie die ID — also `s03-erdbeeren.mp3` für die ID `s03-erdbee
 Es müssen nicht alle Sätze sein. Für jeden Satz ohne Aufnahme springt die deutsche
 Stimme des Geräts ein, also kann man jederzeit ein paar Sätze nachreichen.
 
-Insgesamt: **72 Sätze**.
+Insgesamt: **73 Sätze**.
 
 ## Allgemein
 
@@ -135,6 +135,7 @@ Insgesamt: **72 Sätze**.
 | Dateiname | Text |
 | --- | --- |
 | `s10-intro.mp3` | So viele bunte Schmetterlinge! Bring jeden zu seiner Blume. |
+| `s10-erklaerung.mp3` | Der Schmetterling mag die Blume mit der gleichen Farbe. |
 | `s10-rot.mp3` | Der rote Schmetterling sucht die rote Blume. |
 | `s10-gelb.mp3` | Der gelbe Schmetterling sucht die gelbe Blume. |
 | `s10-blau.mp3` | Der blaue Schmetterling sucht die blaue Blume. |

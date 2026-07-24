@@ -37,10 +37,17 @@ const BLUMEN_ORDNUNG = ["blau", "orange", "lila", "rot", "gelb"];
  */
 export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const [gelandet, setGelandet] = useState<string[]>([]);
+  const [regelGesagt, setRegelGesagt] = useState(false);
   const [fertig, setFertig] = useState(false);
 
   const offen = FARBEN.filter((f) => !gelandet.includes(f.id));
-  const satz: LineId = gelandet.length === 0 ? "s10-intro" : (offen[0]?.satz ?? "s10-fertig");
+  // Erst die Einladung, dann die Spielregel, dann die Farbhinweise.
+  const satz: LineId =
+    gelandet.length > 0
+      ? (offen[0]?.satz ?? "s10-fertig")
+      : regelGesagt
+        ? "s10-erklaerung"
+        : "s10-intro";
 
   const landen = (farbe: Farbe, zone: string | null) => {
     if (zone !== `blume-${farbe.id}`) return false;
@@ -63,6 +70,9 @@ export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProp
       onWeiter={onWeiter}
       onZurueck={onZurueck}
       abschlussSatz="s10-fertig"
+      onSatzGesprochen={(gesagt) => {
+        if (gesagt === "s10-intro") setRegelGesagt(true);
+      }}
       unschaerfe={0.8}
       schleier={0.4}
     >
