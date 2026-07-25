@@ -17,6 +17,7 @@ const TESTS = [
   ["Gleichzeitiger Ton", "ton-ueberlappung.mjs"],
   ["Offline-Betrieb", "offline.mjs"],
   ["Aufnahmestudio", "aufnahmestudio.mjs"],
+  ["Drei Spielstände", "kinder.mjs"],
 ];
 
 function laufen(befehl, argumente, optionen = {}) {

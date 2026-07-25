@@ -194,6 +194,25 @@ export async function speak(id: LineId): Promise<void> {
   return speakWithTts(text);
 }
 
+/**
+ * Spricht nur, wenn es dafür eine echte Aufnahme gibt.
+ *
+ * Für Sätze, die nachträglich dazugekommen sind — etwa die Begrüßung mit dem
+ * Namen. Die Gerätestimme mitten in einer sonst eingesprochenen Umgebung
+ * klingt wie ein Fremdkörper; lieber schweigt das Spiel, bis die Aufnahme da
+ * ist. Die IDs stehen trotzdem in SPRECHTEXTE.md und im Aufnahmestudio.
+ */
+export async function speakWennAufgenommen(id: string): Promise<void> {
+  if (muted) return;
+  const m = await loadManifest();
+  const datei = m[id];
+  if (!datei) return;
+  const meine = ++anforderung;
+  stopSpeaking();
+  if (muted || meine !== anforderung) return;
+  return playRecording(datei);
+}
+
 /** Sätze nacheinander, mit kleiner Pause dazwischen. */
 export async function speakSequence(ids: LineId[], gapMs = 250): Promise<void> {
   for (const id of ids) {

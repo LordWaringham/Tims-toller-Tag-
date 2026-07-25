@@ -1,8 +1,13 @@
 # Tims toller Tag — das Spiel
 
-Ein Mitmachspiel nach dem Bilderbuch *„Tims toller Tag“*, gebaut für ein
-fünfjähriges Kind. Jede Buchseite ist eine Station: vom Aufwachen bis zum
-Gutenachtgruß, mit denselben Illustrationen und denselben Sätzen wie im Buch.
+Ein Mitmachspiel nach dem Bilderbuch *„Tims toller Tag“* — für **Luisa, Maya
+und Marla**, von **Onkel Tom**. Jede Buchseite ist eine Station: vom Aufwachen
+bis zum Gutenachtgruß, mit denselben Illustrationen und denselben Sätzen wie
+im Buch.
+
+Jedes der drei Kinder hat einen eigenen Spielstand. Beim Start wird gefragt,
+wer heute spielt — sonst fände die Zweite alles schon aufgeschlossen vor, und
+die Reise durch den Tag fiele für sie aus.
 
 ## Wie es sich spielt
 
@@ -42,7 +47,7 @@ verlieren mag.
 
 ## Eigene Stimme einsprechen
 
-Standardmäßig liest die deutsche Stimme des Geräts vor. Alle 72 Sätze können
+Standardmäßig liest die deutsche Stimme des Geräts vor. Alle 73 Sätze können
 durch echte Aufnahmen ersetzt werden — am einfachsten über das eingebaute
 **Aufnahmestudio unter [`/aufnahme`](https://tims-toller-tag.vercel.app/aufnahme)**.
 Die Seite ist bewusst nicht aus dem Spiel heraus verlinkt; sie wird über die
@@ -111,7 +116,8 @@ src/
     voice.ts      Aufnahme bevorzugt, sonst Gerätestimme
     sfx.ts        Geräusche, im Browser erzeugt — keine Audiodateien
     stations.ts   Reihenfolge, Sticker, Himmelsfarben
-    progress.ts   Fortschritt im localStorage
+    kinder.ts     Luisa, Maya, Marla — und von wem das Spiel kommt
+    progress.ts   Fortschritt je Kind im localStorage
 public/
   scenes/         die zwölf Illustrationen aus dem Buch
   audio/          die eingesprochenen Sätze

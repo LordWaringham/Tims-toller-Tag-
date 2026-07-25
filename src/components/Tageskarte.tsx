@@ -5,6 +5,7 @@ import { STATIONS, type StationId } from "@/lib/stations";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
 import { TonKnopf } from "./TonKnopf";
+import type { Kind } from "@/lib/kinder";
 
 /** Wo die elf Stationen auf der Bühne liegen (in Prozent). */
 const PLAETZE: { x: number; y: number }[] = [
@@ -26,6 +27,7 @@ const WEG =
   "M15 20.25 L85 20.25 Q93 20.25 93 29.25 Q93 38.25 85 38.25 L15 38.25 Q7 38.25 7 47.25 Q7 56.25 22 56.25 L78 56.25";
 
 export function Tageskarte({
+  kind,
   istOffen,
   istFertig,
   naechste,
@@ -33,6 +35,7 @@ export function Tageskarte({
   onSticker,
   onTitel,
 }: {
+  kind: Kind | null;
   istOffen: (id: StationId) => boolean;
   istFertig: (id: StationId) => boolean;
   naechste: StationId | null;
@@ -98,7 +101,7 @@ export function Tageskarte({
             className="rounded-full px-[4cqw] py-[1cqw] text-[3.4cqw] font-semibold shadow-sm"
             style={{ background: "rgba(255,255,255,0.85)", color: "#4f5c4c" }}
           >
-            Tims Tag
+            {kind ? `${kind.name}s Tag mit Tim` : "Tims Tag"}
           </h2>
         </div>
 

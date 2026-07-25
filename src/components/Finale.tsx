@@ -7,12 +7,15 @@ import { LINES } from "@/lib/lines";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
 import { streuIn } from "@/lib/streu";
+import { SCHENKER, type Kind } from "@/lib/kinder";
 
 /** Der Abschluss des ganzen Tages — ruhig, warm, ohne Punktestand. */
 export function Finale({
+  kind,
   onKarte,
   onNochmal,
 }: {
+  kind: Kind | null;
   onKarte: () => void;
   onNochmal: () => void;
 }) {
@@ -60,6 +63,17 @@ export function Finale({
             style={{ color: "#fdf6ec" }}
           >
             {LINES["finale"]}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4, duration: 1 }}
+            className="text-[3cqw] leading-snug"
+            style={{ color: "rgba(253,246,236,0.78)" }}
+          >
+            {kind ? `Schlaf gut, ${kind.name}.` : "Schlaf gut."} Bis zum nächsten Mal —
+            dein {SCHENKER}
           </motion.p>
 
           <motion.div

@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { STATIONS, type StationId } from "@/lib/stations";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
+import type { Kind } from "@/lib/kinder";
 
 /**
  * Alle gesammelten Sticker auf einen Blick.
@@ -14,9 +15,11 @@ import * as sfx from "@/lib/sfx";
  * nur eine Bilanz, sondern selbst etwas zum Spielen.
  */
 export function Stickerheft({
+  kind,
   istFertig,
   onZurueck,
 }: {
+  kind: Kind | null;
   istFertig: (id: StationId) => boolean;
   onZurueck: () => void;
 }) {
@@ -58,7 +61,7 @@ export function Stickerheft({
 
         <div className="flex min-h-full flex-col items-center justify-center gap-[1.3cqw] px-[5cqw] py-[3cqw]">
           <h2 className="text-[4.6cqw] font-bold" style={{ color: "#54604f" }}>
-            Deine Sticker
+            {kind ? `${kind.name}s Sticker` : "Deine Sticker"}
           </h2>
           <p className="text-[2.8cqw]" style={{ color: "#7b8878" }}>
             {geschafft} von {STATIONS.length} gesammelt

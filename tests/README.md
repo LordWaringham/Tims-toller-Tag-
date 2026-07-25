@@ -17,6 +17,7 @@ npm run test:groessen    # Handy und Tablet, quer und hoch
 npm run test:ton         # spielt das Spiel zwei Sätze gleichzeitig ab?
 npm run test:offline     # läuft alles ohne Netz, samt Sprachaufnahmen?
 npm run test:aufnahme    # Aufnahmestudio bis zum fertigen ZIP
+npm run test:kinder      # bleiben die drei Spielstände getrennt?
 ```
 
 Screenshots landen in `tests/bilder/` und sind nicht eingecheckt. Sie lohnen

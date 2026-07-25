@@ -1,4 +1,4 @@
-import { ADRESSE, browserStarten } from "./helfer.mjs";
+import { ADRESSE, browserStarten, kindWaehlen } from "./helfer.mjs";
 
 const browser = await browserStarten(["--autoplay-policy=no-user-gesture-required"]);
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
@@ -36,6 +36,7 @@ await page.addInitScript(() => {
 
 await page.goto(ADRESSE + "/", { waitUntil: "networkidle" });
 await page.getByRole("button", { name: /Spielen|Weiterspielen/ }).click({ force: true });
+await kindWaehlen(page);
 await page.waitForTimeout(600);
 await page.getByRole("button", { name: /1\. Aufwachen/ }).click({ force: true });
 await page.waitForTimeout(1500);

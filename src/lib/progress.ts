@@ -2,6 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 import { STATIONS, type StationId } from "./stations";
+import { KINDER } from "./kinder";
 
 const KEY = "tims-toller-tag/v1";
 
@@ -15,17 +16,23 @@ export interface Progress {
 const LEER: Progress = { fertig: [], tagGeschafft: false };
 
 /*
- * Der Fortschritt lebt außerhalb von React und wird über useSyncExternalStore
- * gelesen. So gibt es beim ersten Rendern keinen Umweg über einen Effekt, und
- * Server- und Browserstand können nicht auseinanderlaufen.
+ * Jedes Kind hat seinen eigenen Stand.
+ *
+ * Er lebt außerhalb von React und wird über useSyncExternalStore gelesen. So
+ * gibt es beim ersten Rendern keinen Umweg über einen Effekt, und Server- und
+ * Browserstand können nicht auseinanderlaufen.
  */
-let stand: Progress | null = null;
+const staende = new Map<string, Progress>();
 const horcher = new Set<() => void>();
 
-function lesen(): Progress {
+function schluessel(kindId: string) {
+  return `${KEY}/${kindId}`;
+}
+
+function lesen(kindId: string): Progress {
   if (typeof localStorage === "undefined") return LEER;
   try {
-    const roh = localStorage.getItem(KEY);
+    const roh = localStorage.getItem(schluessel(kindId));
     if (!roh) return LEER;
     const gelesen = JSON.parse(roh) as Partial<Progress>;
     const gueltig = new Set(STATIONS.map((s) => s.id));
@@ -40,10 +47,20 @@ function lesen(): Progress {
   }
 }
 
-function schreiben(neu: Progress) {
-  stand = neu;
+/** Wird beim ersten Zugriff aus dem Speicher geladen und danach gehalten. */
+function stand(kindId: string): Progress {
+  let vorhanden = staende.get(kindId);
+  if (!vorhanden) {
+    vorhanden = lesen(kindId);
+    staende.set(kindId, vorhanden);
+  }
+  return vorhanden;
+}
+
+function schreiben(kindId: string, neu: Progress) {
+  staende.set(kindId, neu);
   try {
-    localStorage.setItem(KEY, JSON.stringify(neu));
+    localStorage.setItem(schluessel(kindId), JSON.stringify(neu));
   } catch {
     /* privater Modus o. ä. — dann eben nur für diese Sitzung */
   }
@@ -57,28 +74,55 @@ function anmelden(fn: () => void) {
   };
 }
 
-/** Wird beim ersten Zugriff aus dem Speicher geladen. */
-function momentaufnahme(): Progress {
-  if (stand === null) stand = lesen();
-  return stand;
+/**
+ * Hat überhaupt schon jemand gespielt? Für „Weiterspielen" auf dem Titelbild.
+ *
+ * Bewusst über den Store und nicht direkt aus localStorage gelesen: Beim
+ * Ausliefern der Seite gibt es keinen Speicher, im Browser schon — würde das
+ * beim Rendern abgefragt, stünde erst „Spielen" und dann plötzlich
+ * „Weiterspielen" da, und React meldet zu Recht einen Hydrationsfehler.
+ */
+export function useHatJemandGespielt(): boolean {
+  const abonnieren = useCallback((fn: () => void) => anmelden(fn), []);
+  const momentaufnahme = useCallback(
+    () => KINDER.some((k) => stand(k.id).fertig.length > 0),
+    [],
+  );
+  return useSyncExternalStore(abonnieren, momentaufnahme, () => false);
+}
+
+/** Wie weit ein Kind gekommen ist — für die Namensauswahl. */
+export function fortschrittVon(kindId: string): number {
+  return stand(kindId).fertig.length;
 }
 
 const serverMomentaufnahme = () => LEER;
 
-export function useProgress() {
-  const progress = useSyncExternalStore(anmelden, momentaufnahme, serverMomentaufnahme);
+export function useProgress(kindId: string | null) {
+  const abonnieren = useCallback((fn: () => void) => anmelden(fn), []);
+  const momentaufnahme = useCallback(
+    () => (kindId ? stand(kindId) : LEER),
+    [kindId],
+  );
+  const progress = useSyncExternalStore(abonnieren, momentaufnahme, serverMomentaufnahme);
 
-  const abschliessen = useCallback((id: StationId) => {
-    const alt = momentaufnahme();
-    if (alt.fertig.includes(id)) return;
-    const fertig = [...alt.fertig, id];
-    schreiben({
-      fertig,
-      tagGeschafft: alt.tagGeschafft || fertig.length === STATIONS.length,
-    });
-  }, []);
+  const abschliessen = useCallback(
+    (id: StationId) => {
+      if (!kindId) return;
+      const alt = stand(kindId);
+      if (alt.fertig.includes(id)) return;
+      const fertig = [...alt.fertig, id];
+      schreiben(kindId, {
+        fertig,
+        tagGeschafft: alt.tagGeschafft || fertig.length === STATIONS.length,
+      });
+    },
+    [kindId],
+  );
 
-  const zuruecksetzen = useCallback(() => schreiben(LEER), []);
+  const zuruecksetzen = useCallback(() => {
+    if (kindId) schreiben(kindId, LEER);
+  }, [kindId]);
 
   /**
    * Der Tag wird der Reihe nach gespielt: Station Nummer n ist offen, wenn
@@ -109,5 +153,21 @@ export function useProgress() {
     istFertig,
     naechsteOffene,
     anzahlFertig: progress.fertig.length,
+  };
+}
+
+/** Für die Elternseite: Stand aller Kinder auf einen Blick. */
+export function useAlleStaende() {
+  const abonnieren = useCallback((fn: () => void) => anmelden(fn), []);
+  const momentaufnahme = useCallback(
+    () => KINDER.map((k) => stand(k.id).fertig.length).join(","),
+    [],
+  );
+  const schluesselWert = useSyncExternalStore(abonnieren, momentaufnahme, () => "");
+
+  return {
+    schluesselWert,
+    staende: KINDER.map((k) => ({ kind: k, anzahl: stand(k.id).fertig.length })),
+    allesZuruecksetzen: () => KINDER.forEach((k) => schreiben(k.id, LEER)),
   };
 }

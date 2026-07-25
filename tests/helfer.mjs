@@ -44,6 +44,14 @@ export async function standSetzen(page, fertigeStationen) {
   }, fertigeStationen);
 }
 
+/** Nach dem Startknopf fragt das Spiel, wer heute spielt. */
+export async function kindWaehlen(page, name = "Luisa") {
+  const knopf = page.getByRole("button", { name: new RegExp(`${name} spielt`) });
+  await knopf.waitFor({ timeout: 8000 });
+  await knopf.click({ force: true });
+  await page.waitForTimeout(600);
+}
+
 /** Der Drehhinweis liegt im Hochformat vor dem Spiel — für Tests wegtippen. */
 export async function drehhinweisWegtippen(page) {
   const knopf = page.getByRole("button", { name: /Trotzdem hochkant/ });

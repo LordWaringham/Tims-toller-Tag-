@@ -13,7 +13,7 @@ und heißt genau wie die ID — also `s03-erdbeeren.mp3` für die ID `s03-erdbee
 Es müssen nicht alle Sätze sein. Für jeden Satz ohne Aufnahme springt die deutsche
 Stimme des Geräts ein, also kann man jederzeit ein paar Sätze nachreichen.
 
-Insgesamt: **73 Sätze**.
+Insgesamt: **77 Sätze**.
 
 ## Allgemein
 
@@ -29,6 +29,10 @@ Insgesamt: **73 Sätze**.
 | `sticker.mp3` | Dafür bekommst du einen Sticker. |
 | `gesperrt.mp3` | Das kommt gleich. Wir machen alles der Reihe nach. |
 | `finale.mp3` | Das war ein toller Tag. Bis morgen! |
+| `hallo-luisa.mp3` | Hallo Luisa! Schön, dass du da bist. |
+| `hallo-maya.mp3` | Hallo Maya! Schön, dass du da bist. |
+| `hallo-marla.mp3` | Hallo Marla! Schön, dass du da bist. |
+| `widmung.mp3` | Für Luisa, Maya und Marla. Von Onkel Tom. |
 | `finale-stolz.mp3` | Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an! |
 
 ## Zahlen zum Mitzählen

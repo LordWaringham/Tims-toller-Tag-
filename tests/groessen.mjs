@@ -1,4 +1,4 @@
-import { ADRESSE, BILDER, browserStarten } from "./helfer.mjs";
+import { ADRESSE, BILDER, browserStarten, kindWaehlen } from "./helfer.mjs";
 import { join } from "node:path";
 const browser = await browserStarten();
 const groessen = [
@@ -19,6 +19,7 @@ for (const [name, w, h] of groessen) {
   const hinweis = page.getByRole("button", { name: /Trotzdem hochkant/ });
   if (await hinweis.count()) await hinweis.click({ force: true });
   await page.getByRole("button", { name: /Spielen|Weiterspielen/ }).click({ force: true });
+  await kindWaehlen(page);
   await page.waitForTimeout(900);
   await page.screenshot({ path: join(BILDER, `gr-${name}-karte.png`) });
   await page.getByRole("button", { name: /3\. Frühstück/ }).click({ force: true });

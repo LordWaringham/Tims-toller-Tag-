@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { STATIONS, nextStation, type StationId } from "@/lib/stations";
-import { useProgress } from "@/lib/progress";
+import { useProgress, useHatJemandGespielt, fortschrittVon } from "@/lib/progress";
+import { kindFinden, type Kind } from "@/lib/kinder";
 import * as voice from "@/lib/voice";
 
 import { Titelbild } from "./Titelbild";
+import { WerSpielt } from "./WerSpielt";
 import { Tageskarte } from "./Tageskarte";
 import { Stickerheft } from "./Stickerheft";
 import { Elternseite } from "./Elternseite";
@@ -40,11 +42,14 @@ const SPIELE: Record<StationId, (p: StationProps) => React.ReactElement> = {
   gutenacht: GuteNacht,
 };
 
-type Ansicht = "titel" | "karte" | "station" | "sticker" | "eltern" | "finale";
+type Ansicht = "titel" | "wer" | "karte" | "station" | "sticker" | "eltern" | "finale";
 
 export function Spiel() {
+  const [kindId, setKindId] = useState<string | null>(null);
+  const kind = kindFinden(kindId);
   const { abschliessen, zuruecksetzen, istOffen, istFertig, naechsteOffene, anzahlFertig } =
-    useProgress();
+    useProgress(kindId);
+  const hatJemandGespielt = useHatJemandGespielt();
   const [ansicht, setAnsicht] = useState<Ansicht>("titel");
   const [aktuell, setAktuell] = useState<StationId | null>(null);
   /** Zählt bei jedem Start hoch, damit eine Station sauber neu beginnt. */
@@ -74,61 +79,79 @@ export function Spiel() {
     stationStarten(STATIONS[0].id);
   }, [stationStarten]);
 
+  const kindGewaehlt = useCallback((gewaehlt: Kind) => {
+    setKindId(gewaehlt.id);
+    setAnsicht("karte");
+  }, []);
+
   const Station = aktuell ? SPIELE[aktuell] : null;
 
   return (
     <>
       <Querformat />
       <AnimatePresence mode="wait">
-      <motion.main
-        key={`${ansicht}-${aktuell ?? ""}-${lauf}`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.28 }}
-      >
-        {ansicht === "titel" && (
-          <Titelbild
-            weiterspielen={anzahlFertig > 0}
-            onSpielen={() => setAnsicht("karte")}
-            onEltern={() => setAnsicht("eltern")}
-          />
-        )}
+        <motion.main
+          key={`${ansicht}-${aktuell ?? ""}-${lauf}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28 }}
+        >
+          {ansicht === "titel" && (
+            <Titelbild
+              weiterspielen={hatJemandGespielt}
+              onSpielen={() => setAnsicht("wer")}
+              onEltern={() => setAnsicht("eltern")}
+            />
+          )}
 
-        {ansicht === "karte" && (
-          <Tageskarte
-            istOffen={istOffen}
-            istFertig={istFertig}
-            naechste={naechsteOffene?.id ?? null}
-            onStation={stationStarten}
-            onSticker={() => setAnsicht("sticker")}
-            onTitel={() => setAnsicht("titel")}
-          />
-        )}
+          {ansicht === "wer" && (
+            <WerSpielt
+              onGewaehlt={kindGewaehlt}
+              onZurueck={() => setAnsicht("titel")}
+              fortschritt={fortschrittVon}
+            />
+          )}
 
-        {ansicht === "station" && Station && aktuell && (
-          <Station
-            onGeschafft={() => abschliessen(aktuell)}
-            onWeiter={weiter}
-            onZurueck={() => setAnsicht("karte")}
-          />
-        )}
+          {ansicht === "karte" && (
+            <Tageskarte
+              kind={kind}
+              istOffen={istOffen}
+              istFertig={istFertig}
+              naechste={naechsteOffene?.id ?? null}
+              onStation={stationStarten}
+              onSticker={() => setAnsicht("sticker")}
+              onTitel={() => setAnsicht("titel")}
+            />
+          )}
 
-        {ansicht === "sticker" && (
-          <Stickerheft istFertig={istFertig} onZurueck={() => setAnsicht("karte")} />
-        )}
+          {ansicht === "station" && Station && aktuell && (
+            <Station
+              onGeschafft={() => abschliessen(aktuell)}
+              onWeiter={weiter}
+              onZurueck={() => setAnsicht("karte")}
+            />
+          )}
 
-        {ansicht === "eltern" && (
-          <Elternseite
-            anzahlFertig={anzahlFertig}
-            onZuruecksetzen={zuruecksetzen}
-            onZurueck={() => setAnsicht("titel")}
-          />
-        )}
+          {ansicht === "sticker" && (
+            <Stickerheft
+              kind={kind}
+              istFertig={istFertig}
+              onZurueck={() => setAnsicht("karte")}
+            />
+          )}
 
-        {ansicht === "finale" && (
-          <Finale onKarte={() => setAnsicht("karte")} onNochmal={nochmal} />
-        )}
+          {ansicht === "eltern" && (
+            <Elternseite
+              anzahlFertig={anzahlFertig}
+              onZuruecksetzen={zuruecksetzen}
+              onZurueck={() => setAnsicht("titel")}
+            />
+          )}
+
+          {ansicht === "finale" && (
+            <Finale kind={kind} onKarte={() => setAnsicht("karte")} onNochmal={nochmal} />
+          )}
         </motion.main>
       </AnimatePresence>
     </>

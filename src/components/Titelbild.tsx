@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
+import { KINDER, SCHENKER } from "@/lib/kinder";
 
 /** Startbildschirm mit dem Buchcover. */
 export function Titelbild({
@@ -20,7 +21,12 @@ export function Titelbild({
     voice.unlockAudio();
     sfx.unlockSfx();
     sfx.chime(4);
-    void voice.speakSequence(["titel", "willkommen"], 350);
+    // Die Widmung dazwischen bleibt still, bis eine Aufnahme dafür vorliegt.
+    void (async () => {
+      await voice.speak("titel");
+      await voice.speakWennAufgenommen("widmung");
+      await voice.speak("willkommen");
+    })();
     onSpielen();
   };
 
@@ -57,6 +63,16 @@ export function Titelbild({
             Tims toller Tag
           </motion.h1>
 
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="mt-[1.2cqw] rounded-full px-[3.4cqw] py-[0.9cqw] text-[3cqw] font-semibold"
+            style={{ background: "rgba(255,255,255,0.72)", color: "#54604f" }}
+          >
+            Für {KINDER.map((k) => k.name).join(", ").replace(/, ([^,]*)$/, " und $1")}
+          </motion.p>
+
           <div className="flex-[1.35]" />
 
           <motion.button
@@ -76,6 +92,16 @@ export function Titelbild({
           </motion.button>
 
           <div className="flex-[0.5]" />
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7, duration: 0.8 }}
+            className="mb-[1.6cqw] rounded-full px-[3cqw] py-[0.8cqw] text-[2.8cqw] font-semibold"
+            style={{ background: "rgba(255,255,255,0.72)", color: "#54604f" }}
+          >
+            von {SCHENKER}
+          </motion.p>
 
           <button
             type="button"
