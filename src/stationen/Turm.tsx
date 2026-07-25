@@ -88,7 +88,7 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       unschaerfe={1.2}
       schleier={0.42}
     >
-      {/* Zielmarke in Elbtower-Höhe */}
+      {/* Zielmarke: so hoch soll der Turm werden */}
       <div
         className="pointer-events-none absolute z-10 flex items-center gap-[1.4cqw]"
         style={{
@@ -107,7 +107,7 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           className="rounded-full px-[2cqw] py-[0.8cqw] text-[2.3cqw] font-semibold whitespace-nowrap"
           style={{ background: "rgba(255,255,255,0.85)", color: "#5f6b5c" }}
         >
-          🏢 So hoch!
+          ⭐ So hoch!
         </span>
       </div>
 

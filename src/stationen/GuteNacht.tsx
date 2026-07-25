@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Tippziel } from "@/components/Tippziel";
+import { GeschlossenesAuge } from "@/components/GeschlossenesAuge";
 import { STATIONS } from "@/lib/stations";
 import type { LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
@@ -11,15 +12,23 @@ import * as voice from "@/lib/voice";
 
 const STATION = STATIONS[10];
 
-/** Der kleine Bär, wie er durchs Fenster zu sehen ist. */
+/**
+ * Der kleine Bär, wie er durchs Fenster zu sehen ist.
+ *
+ * Die Sterne lagen früher quer über Tims Gesicht — mitten im Zimmer, einer
+ * genau auf seinem Auge. Sie stehen jetzt rechts neben seinem Kopf, wo die
+ * Fensterscheibe und der Vorhang zu sehen sind: der einzige Fleck des Bildes,
+ * der nach draußen zeigt. Deshalb liegt das Sternbild dort auf der Seite —
+ * am Himmel stehen Sternbilder ohnehin in jeder Lage.
+ */
 const STERNE = [
-  { id: 0, x: 14, y: 40 },
-  { id: 1, x: 23, y: 33 },
-  { id: 2, x: 33, y: 27 },
-  { id: 3, x: 45, y: 25 },
-  { id: 4, x: 57, y: 22 },
-  { id: 5, x: 70, y: 25 },
-  { id: 6, x: 60, y: 35 },
+  { id: 0, x: 68, y: 30 },
+  { id: 1, x: 74, y: 26 },
+  { id: 2, x: 80, y: 22 },
+  { id: 3, x: 87, y: 20 },
+  { id: 4, x: 94, y: 23 },
+  { id: 5, x: 90, y: 31 },
+  { id: 6, x: 80, y: 31 },
 ];
 
 const LINIEN: [number, number][] = [
@@ -126,7 +135,10 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             key={stern.id}
             x={stern.x}
             y={stern.y}
-            groesse={9}
+            // Sechs statt neun: Bei größeren Zielen überlappten sich zwei
+            // Sterne so weit, dass ein Tipp den falschen traf — zwei blieben
+            // dunkel, und die Station ging nie weiter.
+            groesse={6}
             aktiv={phase === "sterne" && !an}
             label="Stern"
             onTipp={() => sternAntippen(stern.id)}
@@ -174,6 +186,38 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         )}
       </AnimatePresence>
 
+      {/*
+        Zugedeckt schläft Tim auch.
+
+        Im Buch schaut er mit offenen Augen aus dem Bett — er soll ja noch
+        wach sein. Wenn das Kind ihn zudeckt und „Schlaf gut" hört, gehören
+        die Augen zu, sonst liegt er mit Zzz über dem Kopf hellwach da.
+        Ausgemessen an der Illustration: 43,9/22,7 und 55,1/22,5.
+      */}
+      <GeschlossenesAuge
+        x={43.9}
+        y={22.7}
+        breite={4.4}
+        hoehe={3.0}
+        oben="#e7c79b"
+        unten="#ecd4b1"
+        wimper="#7b5238"
+        offen={!zugedeckt}
+        helligkeit={zugedeckt ? 0.6 : 0.44}
+      />
+      <GeschlossenesAuge
+        x={55.1}
+        y={22.5}
+        breite={4.4}
+        hoehe={3.0}
+        oben="#e8b987"
+        unten="#eac7a3"
+        wimper="#7b5238"
+        offen={!zugedeckt}
+        verzoegerung={0.09}
+        helligkeit={zugedeckt ? 0.6 : 0.44}
+      />
+
       {/* ----------------------------------------------------- Die Decke */}
       {phase === "decke" && (
         <motion.div
@@ -186,7 +230,13 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           onDrag={(_, info) => {
             if (info.offset.y < -60) zudecken();
           }}
-          animate={zugedeckt ? { y: "-26cqw" } : { y: 0 }}
+          /*
+           * Nur bis zur Brust, nicht über den Kopf.
+           *
+           * Vorher fuhr die Decke 26cqw nach oben — Tim verschwand samt
+           * Gesicht darunter, und die Zzz stiegen aus einem leeren Bett auf.
+           */
+          animate={zugedeckt ? { y: "-4cqw" } : { y: 0 }}
           transition={{ type: "spring", stiffness: 90, damping: 20 }}
         >
           <Decke />

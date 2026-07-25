@@ -11,17 +11,23 @@ import { neueSaat, streuIn } from "@/lib/streu";
 
 const STATION = STATIONS[8];
 
+/*
+ * Zehn Schafe, alle vollstaendig im Bild.
+ *
+ * Die hintere Reihe stand frueher bis x=88; mit der Streuung ragte das
+ * zehnte Schaf ueber den rechten Rand hinaus und war nur halb antippbar.
+ */
 const SCHAFE = [
   { id: "a", x: 13, y: 56 },
   { id: "b", x: 30, y: 54 },
   { id: "c", x: 47, y: 56 },
   { id: "d", x: 64, y: 54 },
   { id: "e", x: 81, y: 56 },
-  { id: "f", x: 20, y: 76 },
-  { id: "g", x: 37, y: 78 },
-  { id: "h", x: 54, y: 76 },
-  { id: "i", x: 71, y: 78 },
-  { id: "j", x: 88, y: 76 },
+  { id: "f", x: 16, y: 76 },
+  { id: "g", x: 33, y: 78 },
+  { id: "h", x: 50, y: 76 },
+  { id: "i", x: 67, y: 78 },
+  { id: "j", x: 84, y: 76 },
 ];
 
 type Phase = "zaehlen" | "streicheln";
@@ -36,8 +42,10 @@ export function Schafe({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const [saat] = useState(neueSaat);
   const herde = SCHAFE.map((schaf, i) => ({
     ...schaf,
-    x: schaf.x + streuIn(i, saat, -3, 3),
+    x: schaf.x + streuIn(i, saat, -2.5, 2.5),
     y: schaf.y + streuIn(i, saat + 1, -2.5, 2.5),
+    // Die hintere Reihe steht weiter weg und ist deshalb kleiner.
+    groesse: 0.84 + ((schaf.y - 54) / 24) * 0.16,
   }));
 
   const [phase, setPhase] = useState<Phase>("zaehlen");
@@ -129,7 +137,7 @@ export function Schafe({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             style={{
               left: `${schaf.x}%`,
               top: `${schaf.y}%`,
-              width: "18cqw",
+              width: `${18 * schaf.groesse}cqw`,
               transform: "translate(-50%, -50%)",
               background: "none",
               border: "none",

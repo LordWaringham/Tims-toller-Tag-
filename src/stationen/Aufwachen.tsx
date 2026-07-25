@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Tippziel } from "@/components/Tippziel";
+import { GeschlossenesAuge } from "@/components/GeschlossenesAuge";
 import { STATIONS } from "@/lib/stations";
 import type { LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
@@ -81,8 +82,9 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2 }}
           style={{
+            // Der Lichtschein muss dort sitzen, wo die Sonne steht.
             background:
-              "radial-gradient(circle at 82% 12%, rgba(255,224,150,0.6) 0%, rgba(255,224,150,0) 45%)",
+              "radial-gradient(circle at 89% 4%, rgba(255,224,150,0.62) 0%, rgba(255,224,150,0) 52%)",
           }}
           aria-hidden
         />
@@ -101,23 +103,83 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         disabled={schritt !== 0}
         onClick={() => weiter(1, () => sfx.chime(5), "s01-sonne")}
         className="absolute z-20 border-none bg-transparent p-0"
-        style={{ left: "82%", width: "20cqw", height: "20cqw", x: "-50%", y: "-50%" }}
+        style={{ width: "20cqw", height: "20cqw", x: "-50%", y: "-50%" }}
         // Ohne dieses initial wandert die Sonne beim Öffnen erst an ihren
         // Startplatz — es sähe aus, als ginge sie unter statt auf.
-        initial={{ top: "72%" }}
+        initial={{ top: "72%", left: "80%" }}
         animate={{
-          // Oben, aber nicht ganz oben: dort steht die Sprechblase.
-          top: schritt >= 1 ? "22%" : "72%",
+          // Am Ende steht sie schräg oben in der Ecke und wird vom Bildrand
+          // angeschnitten: So wirkt sie draußen vor dem Fenster statt im
+          // Zimmer. Sonnen gehen auch nicht senkrecht auf, deshalb schräg.
+          top: schritt >= 1 ? "4%" : "72%",
+          left: schritt >= 1 ? "89%" : "80%",
           scale: schritt === 0 ? [1, 1.07, 1] : 1,
         }}
         transition={{
           top: { type: "spring", stiffness: 42, damping: 18 },
+          left: { type: "spring", stiffness: 42, damping: 18 },
           scale: { duration: 1.8, repeat: schritt === 0 ? Infinity : 0, ease: "easeInOut" },
         }}
         whileTap={{ scale: 0.9 }}
       >
         <Sonne strahlend={schritt >= 1} />
       </motion.button>
+
+      {/*
+        Beide schlafen, bis sie geweckt werden.
+
+        Die Maße stammen aus der Illustration: Teddys Augen liegen bei 17,6/36,7
+        und 22,4/37,6 und sind winzig, Tims bei 44,2/23,5 und 55,0/23,6 und
+        deutlich größer. Teddys Kopf liegt leicht schräg, deshalb die Neigung.
+      */}
+      <GeschlossenesAuge
+        x={17.6}
+        y={36.7}
+        breite={2.3}
+        hoehe={1.4}
+        oben="#e66a2b"
+        unten="#dd5921"
+        wimper="#8f3a14"
+        neigung={8}
+        offen={schritt >= 2}
+        helligkeit={helligkeit}
+      />
+      <GeschlossenesAuge
+        x={22.4}
+        y={37.6}
+        breite={2.3}
+        hoehe={1.4}
+        oben="#e2632a"
+        unten="#cf4a1d"
+        wimper="#8f3a14"
+        neigung={8}
+        offen={schritt >= 2}
+        verzoegerung={0.09}
+        helligkeit={helligkeit}
+      />
+      <GeschlossenesAuge
+        x={44.2}
+        y={23.5}
+        breite={4.4}
+        hoehe={3.0}
+        oben="#e7bd97"
+        unten="#f1d2af"
+        wimper="#7b5238"
+        offen={schritt >= 3}
+        helligkeit={helligkeit}
+      />
+      <GeschlossenesAuge
+        x={55}
+        y={23.6}
+        breite={4.4}
+        hoehe={3.0}
+        oben="#e5b184"
+        unten="#eabf95"
+        wimper="#7b5238"
+        offen={schritt >= 3}
+        verzoegerung={0.09}
+        helligkeit={helligkeit}
+      />
 
       {/* --------------------------------------------------------- 2 · Teddy */}
       {/* Genau auf Teddys Gesicht — nicht auf seine Pfoten. */}

@@ -289,7 +289,8 @@ export function Kekse({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           className="absolute z-20 flex items-center gap-[2cqw] rounded-[2.5cqw] px-[3cqw] py-[1.6cqw]"
           style={{
             left: "50%",
-            bottom: "3%",
+            // Über der Stickerleiste, sonst liegt sie auf dem Blech.
+            bottom: "9.5%",
             transform: "translateX(-50%)",
             minWidth: "58cqw",
             background: "rgba(140,128,116,0.55)",

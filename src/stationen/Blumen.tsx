@@ -232,9 +232,29 @@ function BlumeGrafik({
   angepeilt: boolean;
 }) {
   const t = anteil / 100;
-  const neigung = -26 * (1 - t); // hängt zuerst, richtet sich dann auf
-  const groesse = 0.55 + 0.45 * t;
-  const farbkraft = 0.3 + 0.7 * t;
+  /*
+   * So sieht eine durstige Blume aus.
+   *
+   * Vorher stand sie kerzengerade in voller Blüte und war nur etwas blass —
+   * und das Kind sollte sie gießen, damit sie aufblüht. Jetzt lässt sie den
+   * Kopf hängen: Die Blüte kippt über den Stängelansatz nach unten, die
+   * Blätter hängen mit, und alles ist kleiner und blasser. Mit dem Wasser
+   * richtet sie sich auf.
+   */
+  const neigung = -7 * (1 - t); // der ganze Stängel neigt sich leicht
+  /*
+   * Die Blüte hängt herunter — sie wird verschoben, nicht gedreht.
+   *
+   * Eine Drehung bringt hier nichts: Die Blüte hat acht Blütenblätter im
+   * 45-Grad-Abstand und sieht gedreht genauso aus wie vorher. Sichtbar wird
+   * das Hängen erst, wenn der Kopf neben und unter den Stängelansatz rutscht
+   * und der Stängel sich dorthin biegt.
+   */
+  const kopfX = -15 * (1 - t);
+  const kopfY = 30 * (1 - t);
+  const blattNeigung = 22 * (1 - t);
+  const groesse = 0.52 + 0.48 * t;
+  const farbkraft = 0.25 + 0.75 * t;
   const blueht = anteil >= 100;
 
   return (
@@ -274,23 +294,36 @@ function BlumeGrafik({
         style={{ transformOrigin: "50% 100%" }}
         aria-hidden
       >
-        {/* Stängel */}
-        <path
-          d="M50 150 q-4 -40 0 -70"
+        {/* Stängel — biegt sich zur hängenden Blüte hin */}
+        <motion.path
           fill="none"
           stroke="#5a8c28"
           strokeWidth="6"
           strokeLinecap="round"
+          animate={{ d: blueht || t > 0.99 ? "M50 150 q-4 -40 0 -70" : gebogen(t) }}
+          transition={{ type: "spring", stiffness: 90, damping: 15 }}
         />
-        {/* Blätter */}
-        <path d="M50 120 q-22 -12 -26 4 q18 10 26 -4z" fill="#6ba32f" />
-        <path d="M50 100 q22 -12 26 4 q-18 10 -26 -4z" fill="#6ba32f" />
+        {/* Blätter — hängen mit, solange die Blume Durst hat */}
+        <motion.path
+          d="M50 120 q-22 -12 -26 4 q18 10 26 -4z"
+          fill="#6ba32f"
+          animate={{ rotate: blattNeigung }}
+          transition={{ type: "spring", stiffness: 110, damping: 14 }}
+          style={{ transformOrigin: "50px 120px" }}
+        />
+        <motion.path
+          d="M50 100 q22 -12 26 4 q-18 10 -26 -4z"
+          fill="#6ba32f"
+          animate={{ rotate: -blattNeigung }}
+          transition={{ type: "spring", stiffness: 110, damping: 14 }}
+          style={{ transformOrigin: "50px 100px" }}
+        />
 
-        {/* Blüte */}
+        {/* Blüte — kippt über den Stängelansatz, wenn sie durstig ist */}
         <motion.g
-          animate={{ scale: groesse }}
-          transition={{ type: "spring", stiffness: 160, damping: 12 }}
-          style={{ transformOrigin: "50px 62px" }}
+          animate={{ scale: groesse, x: kopfX, y: kopfY }}
+          transition={{ type: "spring", stiffness: 130, damping: 15 }}
+          style={{ transformOrigin: "50px 80px" }}
         >
           {Array.from({ length: 8 }, (_, i) => (
             <ellipse
@@ -371,4 +404,18 @@ function Giesskanne() {
       />
     </svg>
   );
+}
+
+/**
+ * Der Stängel einer durstigen Blume.
+ *
+ * Er endet dort, wo die Blüte hängt: bei t=0 weit links unterhalb des
+ * Ansatzes, bei t=1 gerade oben. Beide Formen haben denselben Aufbau, damit
+ * Motion sauber zwischen ihnen überblenden kann.
+ */
+function gebogen(t: number): string {
+  const endX = -15 * (1 - t);
+  const endY = -70 + 30 * (1 - t);
+  const griff = -4 - 8 * (1 - t);
+  return `M50 150 q${griff.toFixed(1)} ${(endY * 0.62).toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`;
 }

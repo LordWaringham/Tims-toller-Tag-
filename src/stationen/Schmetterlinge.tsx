@@ -155,7 +155,8 @@ export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProp
         className="pointer-events-none absolute z-30 flex items-center gap-[1.2cqw] rounded-full px-[2.6cqw] py-[1.2cqw] shadow-md"
         style={{
           left: "50%",
-          bottom: "3%",
+          // Über der Stickerleiste, sonst steckt der Zähler dahinter.
+          bottom: "9.5%",
           transform: "translateX(-50%)",
           background: "rgba(255,255,255,0.88)",
         }}

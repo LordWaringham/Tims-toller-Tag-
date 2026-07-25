@@ -275,6 +275,18 @@ for (let i = 0; i < anzahlSterne; i++) {
   await sterne.nth(i).click({ force: true });
   await page.waitForTimeout(300);
 }
+/*
+ * Jeder Tipp muss seinen eigenen Stern treffen.
+ *
+ * Als die Sterne enger zusammenrückten, überlappten sich zwei Tippflächen:
+ * Der Tipp landete auf dem Nachbarn, zwei Sterne blieben dunkel, und die
+ * Station kam nie zur Decke. Ein leuchtender Stern ist nicht mehr antippbar,
+ * also müssen danach alle sieben Knöpfe gesperrt sein.
+ */
+const nochOffen = await sterne.evaluateAll((els) => els.filter((e) => !e.disabled).length);
+if (nochOffen > 0) {
+  throw new Error(`${nochOffen} von ${anzahlSterne} Sternen blieben dunkel — Tippflächen überlappen sich`);
+}
 await page.waitForTimeout(7000);
 await shot("27-gutenacht-decke");
 // Decke hochziehen

@@ -204,12 +204,19 @@ export async function speak(id: LineId): Promise<void> {
  */
 export async function speakWennAufgenommen(id: string): Promise<void> {
   if (muted) return;
+  /*
+   * Die Nummer wird vor dem Warten gezogen, genau wie in speak().
+   *
+   * Vorher wurde sie erst danach vergeben — damit gewann die ältere
+   * Anforderung: Der Gruß „Hallo Luise!" von der Namensauswahl überholte den
+   * Einstiegssatz der Station, und die Station begann stumm.
+   */
+  const meine = ++anforderung;
   const m = await loadManifest();
+  if (muted || meine !== anforderung) return;
   const datei = m[id];
   if (!datei) return;
-  const meine = ++anforderung;
   stopSpeaking();
-  if (muted || meine !== anforderung) return;
   return playRecording(datei);
 }
 
