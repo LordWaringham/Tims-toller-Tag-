@@ -22,6 +22,7 @@ export type Pose = "stehen" | "winken";
 export function TimFigur({
   shirtFarbe,
   hoseFarbe,
+  hoseKurz = false,
   pose = "stehen",
   augenZu = false,
   className,
@@ -30,6 +31,8 @@ export function TimFigur({
   /** Kein Wert = Tim trägt noch kein Oberteil. */
   shirtFarbe?: string;
   hoseFarbe?: string;
+  /** Kurze Hose — dann bleibt das Pflaster am Knie zu sehen. */
+  hoseKurz?: boolean;
   pose?: Pose;
   augenZu?: boolean;
   className?: string;
@@ -61,22 +64,63 @@ export function TimFigur({
 
       {/* ------------------------------------------------------------- Beine */}
       <g>
+        {/* Bei kurzer Hose bleiben die Beine Haut und bekommen oben ein Höschen. */}
         <path
           d="M39 98 h10 v50 q-5 2 -10 0z"
-          fill={hoseFarbe ?? HAUT}
+          fill={hoseFarbe && !hoseKurz ? hoseFarbe : HAUT}
           stroke={UMRISS}
           strokeWidth="1.3"
           strokeLinejoin="round"
         />
         <path
           d="M53 98 h10 v50 q-5 2 -10 0z"
-          fill={hoseFarbe ?? HAUT}
+          fill={hoseFarbe && !hoseKurz ? hoseFarbe : HAUT}
           stroke={UMRISS}
           strokeWidth="1.3"
           strokeLinejoin="round"
         />
-        {hoseFarbe && (
+        {hoseFarbe && !hoseKurz && (
           <path d="M39 98 h24 v50 q-12 3 -24 0z" fill="url(#timStoff)" opacity="0.9" />
+        )}
+        {hoseFarbe && hoseKurz && (
+          <g>
+            <path
+              d="M37 96 h28 v11 q-14 3 -28 0z"
+              fill={hoseFarbe}
+              stroke={UMRISS}
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+            <path d="M37 96 h28 v11 q-14 3 -28 0z" fill="url(#timStoff)" opacity="0.9" />
+          </g>
+        )}
+
+        {/*
+          Das Pflaster am Knie.
+
+          In den Bilderbüchern von Katharina Wieker trägt Tim fast immer eines —
+          er lernt ja gerade Rad fahren. Es sitzt auf der Haut und verschwindet
+          folgerichtig unter der Hose, sobald das Kind ihm eine angezogen hat.
+        */}
+        {(!hoseFarbe || hoseKurz) && (
+          <g transform="rotate(-14 44 113)">
+            <rect
+              x="38.9"
+              y="110"
+              width="10.2"
+              height="6"
+              rx="2.8"
+              fill="#f7d8ae"
+              stroke="#d3a674"
+              strokeWidth="0.7"
+            />
+            <rect x="42.1" y="111.3" width="3.8" height="3.4" rx="1.1" fill="#e9c395" />
+            {[40.4, 47.2].map((x) =>
+              [111.4, 113.6].map((y) => (
+                <circle key={`${x}-${y}`} cx={x} cy={y} r="0.42" fill="#d3a674" />
+              )),
+            )}
+          </g>
         )}
         {/* Schuhe */}
         <path

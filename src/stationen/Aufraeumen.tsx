@@ -86,6 +86,9 @@ export function Aufraeumen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       onWeiter={onWeiter}
       onZurueck={onZurueck}
       abschlussSatz="s05-fertig"
+      onSatzGesprochen={(gesagt) => {
+        if (gesagt === "s05-intro") void voice.speakWennAufgenommen("tim-freunde");
+      }}
       unschaerfe={1.2}
       schleier={0.5}
     >

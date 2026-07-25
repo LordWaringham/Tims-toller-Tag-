@@ -34,7 +34,11 @@ export function Finale({
 
   useEffect(() => {
     sfx.nightBell(3);
-    void voice.speakSequence(["finale", "finale-stolz"], 400);
+    void (async () => {
+      await voice.speakSequence(["finale", "finale-stolz"], 400);
+      // Tims Freunde aus den Büchern — still, bis es eine Aufnahme gibt.
+      await voice.speakWennAufgenommen("tim-morgen");
+    })();
     return () => voice.stopSpeaking(true);
   }, []);
 

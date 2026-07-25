@@ -17,6 +17,8 @@ interface Kleidungsstueck {
   art: "oberteil" | "hose";
   farbe: string;
   name: string;
+  /** Kurze Hose — dann bleibt Tims Pflaster am Knie zu sehen. */
+  kurz?: boolean;
 }
 
 const KLEIDUNG: Kleidungsstueck[] = [
@@ -25,7 +27,7 @@ const KLEIDUNG: Kleidungsstueck[] = [
   { id: "shirt-blau", art: "oberteil", farbe: "#4a8fc0", name: "blaues T-Shirt" },
   { id: "hose-blau", art: "hose", farbe: "#3e6c9e", name: "blaue Hose" },
   { id: "hose-braun", art: "hose", farbe: "#8a6a44", name: "braune Hose" },
-  { id: "hose-gruen", art: "hose", farbe: "#5f8c4a", name: "grüne Hose" },
+  { id: "hose-kurz", art: "hose", farbe: "#5f8c4a", name: "kurze grüne Hose", kurz: true },
 ];
 
 /**
@@ -76,6 +78,10 @@ export function Anziehen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       abschlussSatz="s02-fertig"
       unschaerfe={1.4}
       schleier={0.55}
+      onSatzGesprochen={(gesagt) => {
+        // Tims Pflaster am Knie — bleibt still, bis es dafür eine Aufnahme gibt.
+        if (gesagt === "s02-oberteil") void voice.speakWennAufgenommen("tim-pflaster");
+      }}
     >
       {/* Tim in der Mitte */}
       <div
@@ -85,6 +91,7 @@ export function Anziehen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         <TimFigur
           shirtFarbe={oberteil?.farbe}
           hoseFarbe={hose?.farbe}
+          hoseKurz={hose?.kurz}
           pose={oberteil && hose ? "winken" : "stehen"}
           className="h-[62cqh] w-auto drop-shadow-lg"
         />
@@ -142,7 +149,11 @@ export function Anziehen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             breite={16}
           >
             <div className="drop-shadow-md" aria-label={stueck.name}>
-              {links ? <ShirtGrafik farbe={stueck.farbe} /> : <HoseGrafik farbe={stueck.farbe} />}
+              {links ? (
+                <ShirtGrafik farbe={stueck.farbe} />
+              ) : (
+                <HoseGrafik farbe={stueck.farbe} kurz={stueck.kurz} />
+              )}
             </div>
           </Ziehbar>
         );
@@ -186,11 +197,15 @@ function ShirtGrafik({ farbe }: { farbe: string }) {
   );
 }
 
-function HoseGrafik({ farbe }: { farbe: string }) {
+function HoseGrafik({ farbe, kurz = false }: { farbe: string; kurz?: boolean }) {
   return (
     <svg viewBox="0 0 100 104" className="w-full" aria-hidden>
       <path
-        d="M18 6 h64 l6 92 h-24 l-8 -52 h-4 l-8 52 h-24z"
+        d={
+          kurz
+            ? "M18 6 h64 l5 44 h-24 l-7 -18 h-4 l-7 18 h-24z"
+            : "M18 6 h64 l6 92 h-24 l-8 -52 h-4 l-8 52 h-24z"
+        }
         fill={farbe}
         stroke="rgba(0,0,0,0.28)"
         strokeWidth="2"

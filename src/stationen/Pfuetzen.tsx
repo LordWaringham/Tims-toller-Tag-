@@ -63,6 +63,9 @@ export function Pfuetzen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       onWeiter={onWeiter}
       onZurueck={onZurueck}
       abschlussSatz="s08-fertig"
+      onSatzGesprochen={(gesagt) => {
+        if (gesagt === "s08-intro") void voice.speakWennAufgenommen("tim-coco");
+      }}
       schleier={0.12}
     >
       {/* ---------------------------------------------------------- Regen */}

@@ -34,6 +34,13 @@ export function Elternseite({ onZurueck }: { onZurueck: () => void }) {
             Station — vom Aufwachen bis zum Gutenachtgruß. Die Stationen werden der Reihe nach
             freigeschaltet.
           </p>
+          <p className="mt-3">
+            Die Figur Tim stammt aus den MAXI-Bilderbüchern von Katharina Wieker. Dort erlebt
+            er lauter erste Male — Kindergarten, Rad fahren, Seepferdchen —, hat zwei feste
+            Freunde, Leon und Annika, und gehört im Kindergarten zur Piratengruppe. Leons Hund
+            heißt Coco. Sein Erkennungszeichen ist das Pflaster am Knie — beim Anziehen trägt
+            er es auch hier, und mit der kurzen Hose bleibt es zu sehen.
+          </p>
           <ul className="mt-3 list-disc space-y-1 pl-5">
             <li>Man kann nicht verlieren. Es gibt keine Zeit, keine Punkte, kein Rot.</li>
             <li>Alles wird vorgelesen — Lesen ist nicht nötig.</li>

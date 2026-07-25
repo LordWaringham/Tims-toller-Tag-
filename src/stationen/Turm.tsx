@@ -87,6 +87,11 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       abschlussSatz="s04-fertig"
       unschaerfe={1.2}
       schleier={0.42}
+      onSatzGesprochen={(gesagt) => {
+        // Tim gehört im Kindergarten zur Piratengruppe — bleibt still, bis es
+        // dafür eine Aufnahme gibt.
+        if (gesagt === "s04-intro") void voice.speakWennAufgenommen("tim-piraten");
+      }}
     >
       {/* Zielmarke: so hoch soll der Turm werden */}
       <div
@@ -107,7 +112,7 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           className="rounded-full px-[2cqw] py-[0.8cqw] text-[2.3cqw] font-semibold whitespace-nowrap"
           style={{ background: "rgba(255,255,255,0.85)", color: "#5f6b5c" }}
         >
-          ⭐ So hoch!
+          🏴‍☠️ So hoch!
         </span>
       </div>
 

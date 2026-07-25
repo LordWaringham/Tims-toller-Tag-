@@ -28,6 +28,22 @@ export const LINES = {
   widmung: "Für Luise, Maya und Marla. Von Onkel Tom.",
   "finale-stolz": "Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an!",
 
+  /*
+   * Tims Freunde aus den Bilderbüchern.
+   *
+   * Die Figur stammt aus der Reihe von Katharina Wieker. Dort hat Tim zwei
+   * feste Freunde — Leon und Annika —, Leon hat einen Hund namens Coco, und
+   * im Kindergarten gehört Tim zur Piratengruppe. Diese vier Sätze bringen
+   * das ins Spiel, ohne den Ablauf zu ändern: Sie kommen jeweils nach dem
+   * Einstiegssatz einer Station und bleiben still, bis eine Aufnahme dafür
+   * vorliegt.
+   */
+  "tim-piraten": "Weißt du was? Im Kindergarten ist Tim bei den Piraten. Piraten bauen die höchsten Türme!",
+  "tim-freunde": "Leon und Annika kommen gleich zum Spielen. Vorher wird noch aufgeräumt.",
+  "tim-coco": "Leons Hund Coco springt am liebsten mit in die Pfützen.",
+  "tim-morgen": "Morgen erzähle ich Leon und Annika alles. Und Coco natürlich auch.",
+  "tim-pflaster": "Siehst du das Pflaster an Tims Knie? Das hat er fast immer — vom Rad fahren.",
+
   // Zahlen zum Mitzählen
   "zahl-1": "eins",
   "zahl-2": "zwei",

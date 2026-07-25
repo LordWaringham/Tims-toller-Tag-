@@ -5,6 +5,17 @@ und Marla**, von **Onkel Tom**. Jede Buchseite ist eine Station: vom Aufwachen
 bis zum Gutenachtgruß, mit denselben Illustrationen und denselben Sätzen wie
 im Buch.
 
+Die Figur Tim stammt aus den MAXI-Bilderbüchern von **Katharina Wieker**
+(Ellermann). Dort erlebt er lauter erste Male — Kindergarten, Rad fahren,
+Seepferdchen, Fußball —, hat zwei feste Freunde, **Leon und Annika**, Leons
+Hund heißt **Coco**, und im Kindergarten gehört Tim zur **Piratengruppe**. Sein
+Erkennungszeichen ist das **Pflaster am Knie**.
+
+Im Spiel steckt das an fünf Stellen: Tim trägt beim Anziehen sein Pflaster (und
+eine der drei Hosen ist kurz, damit es zu sehen bleibt), die Zielmarke beim
+Turmbau ist eine Piratenflagge, und fünf Sätze nehmen Freunde und Pflaster auf
+(`tim-piraten`, `tim-freunde`, `tim-coco`, `tim-morgen`, `tim-pflaster`).
+
 Jedes der drei Kinder hat einen eigenen Spielstand. Beim Start wird gefragt,
 wer heute spielt — sonst fände die Zweite alles schon aufgeschlossen vor, und
 die Reise durch den Tag fiele für sie aus.

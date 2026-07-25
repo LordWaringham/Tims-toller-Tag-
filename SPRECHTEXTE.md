@@ -13,7 +13,7 @@ und heißt genau wie die ID — also `s03-erdbeeren.mp3` für die ID `s03-erdbee
 Es müssen nicht alle Sätze sein. Für jeden Satz ohne Aufnahme springt die deutsche
 Stimme des Geräts ein, also kann man jederzeit ein paar Sätze nachreichen.
 
-Insgesamt: **77 Sätze**.
+Insgesamt: **82 Sätze**.
 
 ## Allgemein
 
@@ -34,6 +34,11 @@ Insgesamt: **77 Sätze**.
 | `hallo-marla.mp3` | Hallo Marla! Schön, dass du da bist. |
 | `widmung.mp3` | Für Luise, Maya und Marla. Von Onkel Tom. |
 | `finale-stolz.mp3` | Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an! |
+| `tim-piraten.mp3` | Weißt du was? Im Kindergarten ist Tim bei den Piraten. Piraten bauen die höchsten Türme! |
+| `tim-freunde.mp3` | Leon und Annika kommen gleich zum Spielen. Vorher wird noch aufgeräumt. |
+| `tim-coco.mp3` | Leons Hund Coco springt am liebsten mit in die Pfützen. |
+| `tim-morgen.mp3` | Morgen erzähle ich Leon und Annika alles. Und Coco natürlich auch. |
+| `tim-pflaster.mp3` | Siehst du das Pflaster an Tims Knie? Das hat er fast immer — vom Rad fahren. |
 
 ## Zahlen zum Mitzählen
 
