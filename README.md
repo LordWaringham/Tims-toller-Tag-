@@ -81,7 +81,13 @@ npm install
 npm run dev      # http://localhost:3000
 npm run build    # statischer Export nach out/
 npm run lint
+npm test         # Browsertests, siehe tests/README.md
 ```
+
+`npm test` spielt das gebaute Spiel in einem echten Browser durch: alle elf
+Stationen, vier Bildschirmgrößen, der Offline-Betrieb und die Frage, ob je
+zwei Sätze gleichzeitig erklingen. Fast jeder Fehler in diesem Projekt war
+nur so zu finden — Näheres in [tests/README.md](tests/README.md).
 
 ## Auf Vercel veröffentlichen
 
@@ -108,7 +114,8 @@ src/
     progress.ts   Fortschritt im localStorage
 public/
   scenes/         die zwölf Illustrationen aus dem Buch
-  audio/          hierhin kommen eigene Aufnahmen
+  audio/          die eingesprochenen Sätze
+tests/            Browsertests (Playwright)
 ```
 
 Zwei Dinge, über die man beim Weiterbauen leicht stolpert:

@@ -9,7 +9,13 @@
     "start": "next start",
     "lint": "eslint",
     "sprechtexte": "node scripts/sprechtexte.mjs",
-    "audio": "node scripts/audio-manifest.mjs"
+    "audio": "node scripts/audio-manifest.mjs",
+    "test": "node tests/alle.mjs",
+    "test:durchlauf": "node tests/durchspielen.mjs",
+    "test:groessen": "node tests/groessen.mjs",
+    "test:ton": "node tests/ton-ueberlappung.mjs",
+    "test:offline": "node tests/offline.mjs",
+    "test:aufnahme": "node tests/aufnahmestudio.mjs"
   },
   "dependencies": {
     "motion": "^12.42.2",
@@ -25,7 +31,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.11",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "playwright": "^1.61.1"
   },
   "description": "Mitmachspiel nach dem Bilderbuch Tims toller Tag"
 }
