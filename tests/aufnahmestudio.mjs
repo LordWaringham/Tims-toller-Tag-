@@ -80,19 +80,25 @@ if (imManifest > 0 && anhoerenVorher === 0) {
   fehler.push("Für die Sätze im Spiel gibt es keinen Anhören-Knopf");
 }
 
-// Drei noch fehlende Sätze aufnehmen.
+/*
+ * Drei Sätze aufnehmen — bevorzugt noch offene.
+ *
+ * Sind alle schon eingesprochen, wird stattdessen ein vorhandener neu
+ * aufgenommen. Der Zähler darf dann nicht steigen: Der Satz war ja schon da.
+ */
 const nehmenWir = 3;
+let neuDazu = 0;
 for (let i = 0; i < nehmenWir; i++) {
-  const knopf = page.getByRole("button", { name: /● Aufnehmen/ }).first();
-  if (!(await knopf.count())) {
-    console.log("  Alle Sätze sind schon eingesprochen — nichts mehr aufzunehmen");
-    break;
-  }
+  const offen = page.getByRole("button", { name: /● Aufnehmen/ }).first();
+  const warOffen = (await offen.count()) > 0;
+  // nth(i), damit nicht dreimal derselbe Satz überschrieben wird.
+  const knopf = warOffen ? offen : page.getByRole("button", { name: /^Nochmal$/ }).nth(i);
   await knopf.click();
   await page.waitForTimeout(700);
   await page.getByRole("button", { name: /Fertig/ }).click({ timeout: 5000 });
   await page.waitForTimeout(500);
-  console.log(`  Satz ${i + 1} aufgenommen`);
+  if (warOffen) neuDazu++;
+  console.log(`  Satz ${i + 1} aufgenommen (${warOffen ? "war offen" : "war schon im Spiel"})`);
 }
 
 await page.waitForTimeout(600);
@@ -100,9 +106,10 @@ const danach = await stand();
 console.log("Kopfzeile danach:", (await page.locator("header").innerText()).replace(/\n/g, " | "));
 await page.screenshot({ path: `${SHOT}/aufnahme-mit.png` });
 
-if (anfang && danach && danach.fertig !== anfang.fertig + nehmenWir) {
+if (anfang && danach && danach.fertig !== anfang.fertig + neuDazu) {
   fehler.push(
-    `Nach ${nehmenWir} Aufnahmen erwartet ${anfang.fertig + nehmenWir}, gezeigt ${danach.fertig}`,
+    `Nach ${nehmenWir} Aufnahmen (${neuDazu} davon neu) erwartet ` +
+      `${anfang.fertig + neuDazu}, gezeigt ${danach.fertig}`,
   );
 }
 

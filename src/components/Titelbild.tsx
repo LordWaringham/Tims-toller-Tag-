@@ -149,10 +149,23 @@ export function Titelbild({
           <div className="flex-1" />
         </div>
 
+        {/*
+          Während der Begrüßung ist die ganze Fläche ein Weiter-Knopf. Ein
+          fünfjähriges Kind tippt irgendwohin, nicht zielsicher auf den Knopf.
+        */}
+        {laeuft && (
+          <button
+            type="button"
+            onClick={starten}
+            aria-label="Begrüßung überspringen"
+            className="absolute inset-0 z-30 border-none bg-transparent p-0"
+          />
+        )}
+
         <button
           type="button"
           onClick={onEltern}
-          className="absolute right-[2.4cqw] bottom-[2.4cqw] rounded-full px-[2.8cqw] py-[1.1cqw] text-[2.3cqw] font-medium shadow-sm"
+          className="absolute right-[2.4cqw] bottom-[2.4cqw] z-40 rounded-full px-[2.8cqw] py-[1.1cqw] text-[2.3cqw] font-medium shadow-sm"
           style={{ background: "rgba(255,255,255,0.8)", color: "#5f6b5c" }}
         >
           Erläuterungen für Erwachsene
