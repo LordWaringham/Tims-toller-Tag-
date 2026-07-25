@@ -47,18 +47,20 @@ verlieren mag.
 
 ## Eigene Stimme einsprechen
 
-Standardmäßig liest die deutsche Stimme des Geräts vor. Alle 73 Sätze können
-durch echte Aufnahmen ersetzt werden — am einfachsten über das eingebaute
+Standardmäßig liest die deutsche Stimme des Geräts vor. Alle Sätze können durch
+echte Aufnahmen ersetzt werden — am einfachsten über das eingebaute
 **Aufnahmestudio unter [`/aufnahme`](https://tims-toller-tag.vercel.app/aufnahme)**.
 Die Seite ist bewusst nicht aus dem Spiel heraus verlinkt; sie wird über die
 Adresse aufgerufen:
 
 1. Alle Sätze stehen dort untereinander, jeder mit einem Aufnahmeknopf.
    Eingesprochen wird direkt im Browser, auch am Handy.
-2. Jede Aufnahme lässt sich sofort anhören und beliebig oft neu machen. Die
+2. Was schon im Spiel liegt, ist grün und als *schon im Spiel* gekennzeichnet —
+   auch auf einem fremden Gerät. Offen steht oben, wie viele Sätze noch fehlen.
+3. Jede Aufnahme lässt sich sofort anhören und beliebig oft neu machen. Die
    Aufnahmen liegen in IndexedDB — das Fenster darf zwischendurch zu sein.
-3. **Alle herunterladen** liefert ein ZIP mit fertig benannten Dateien.
-4. Den Inhalt des ZIPs nach `public/audio/` hochladen (auf GitHub:
+4. **Herunterladen** liefert ein ZIP — nur mit den neu aufgenommenen Sätzen.
+5. Den Inhalt des ZIPs nach `public/audio/` hochladen (auf GitHub:
    *Add file → Upload files*). Der nächste Build übernimmt sie automatisch.
 
 Von Hand geht es auch: Datei nach der ID des Satzes benennen und in

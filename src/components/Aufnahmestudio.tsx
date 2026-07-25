@@ -18,6 +18,8 @@ type Zustand = "laedt" | "bereit" | "kein-mikrofon";
 export function Aufnahmestudio() {
   const [zustand, setZustand] = useState<Zustand>("laedt");
   const [aufnahmen, setAufnahmen] = useState<Map<string, Aufnahme>>(new Map());
+  /** Sätze, die schon im Spiel liegen: ID → Dateiname unter /audio/. */
+  const [aufServer, setAufServer] = useState<Map<string, string>>(new Map());
   const [laeuft, setLaeuft] = useState<LineId | null>(null);
   const [spielt, setSpielt] = useState<LineId | null>(null);
   const [dauer, setDauer] = useState(0);
@@ -39,6 +41,26 @@ export function Aufnahmestudio() {
         setZustand("bereit");
       })
       .catch(() => setZustand("bereit"));
+  }, []);
+
+  /**
+   * Was schon eingesprochen und hochgeladen wurde, steht im Manifest.
+   *
+   * Ohne diese Abfrage stünde nach jedem Gerätewechsel „0 von 77“ da, und man
+   * müsste raten, welche Sätze noch fehlen — die IndexedDB kennt ja nur die
+   * Aufnahmen dieses einen Browsers.
+   */
+  useEffect(() => {
+    let abgebrochen = false;
+    fetch("/audio/manifest.json")
+      .then((r) => (r.ok ? r.json() : {}))
+      .catch(() => ({}))
+      .then((m: Record<string, string>) => {
+        if (!abgebrochen) setAufServer(new Map(Object.entries(m ?? {})));
+      });
+    return () => {
+      abgebrochen = true;
+    };
   }, []);
 
   // Mikrofon erst beim ersten Aufnehmen anfordern, nicht schon beim Öffnen.
@@ -104,17 +126,24 @@ export function Aufnahmestudio() {
 
   const anhoeren = useCallback(
     (id: LineId) => {
+      // Die neue Aufnahme geht vor; sonst das, was im Spiel liegt.
       const aufnahme = aufnahmen.get(id);
-      if (!aufnahme) return;
+      const datei = aufServer.get(id);
+      const quelle = aufnahme
+        ? URL.createObjectURL(aufnahme.blob)
+        : datei
+          ? `/audio/${datei}`
+          : null;
+      if (!quelle) return;
       audioRef.current?.pause();
-      const audio = new Audio(URL.createObjectURL(aufnahme.blob));
+      const audio = new Audio(quelle);
       audioRef.current = audio;
       audio.onended = () => setSpielt(null);
       audio.onerror = () => setSpielt(null);
       setSpielt(id);
       void audio.play();
     },
-    [aufnahmen],
+    [aufnahmen, aufServer],
   );
 
   const loeschen = useCallback(async (id: LineId) => {
@@ -154,7 +183,16 @@ export function Aufnahmestudio() {
     }
   }, [aufnahmen]);
 
-  const fertig = aufnahmen.size;
+  /** Ein Satz gilt als erledigt, wenn er hier neu oder schon im Spiel ist. */
+  const istFertig = useCallback(
+    (id: LineId) => aufnahmen.has(id) || aufServer.has(id),
+    [aufnahmen, aufServer],
+  );
+  const fertig = useMemo(
+    () => GRUPPEN.reduce((s, g) => s + g.saetze.filter((z) => istFertig(z.id)).length, 0),
+    [istFertig],
+  );
+  const neue = aufnahmen.size;
 
   if (zustand === "laedt") {
     return <div className="min-h-dvh bg-creme" />;
@@ -164,10 +202,11 @@ export function Aufnahmestudio() {
     <div className="min-h-dvh bg-creme pb-24">
       <Kopf
         fertig={fertig}
+        neue={neue}
         packt={packt}
         onHerunterladen={herunterladen}
         onAllesLoeschen={async () => {
-          if (!confirm("Wirklich alle Aufnahmen löschen?")) return;
+          if (!confirm("Wirklich alle hier neu aufgenommenen Sätze löschen?")) return;
           await alleEntfernen();
           setAufnahmen(new Map());
         }}
@@ -193,7 +232,7 @@ export function Aufnahmestudio() {
         )}
 
         {GRUPPEN.map((gruppe) => {
-          const inGruppe = gruppe.saetze.filter((s) => aufnahmen.has(s.id)).length;
+          const inGruppe = gruppe.saetze.filter((s) => istFertig(s.id)).length;
           return (
             <section key={gruppe.titel} className="mt-8">
               <div className="mb-1 flex items-baseline justify-between gap-3">
@@ -220,6 +259,7 @@ export function Aufnahmestudio() {
                     id={satz.id}
                     text={satz.text}
                     aufnahme={aufnahmen.get(satz.id)}
+                    imSpiel={aufServer.has(satz.id)}
                     nimmtAuf={laeuft === satz.id}
                     gesperrt={laeuft !== null && laeuft !== satz.id}
                     spielt={spielt === satz.id}
@@ -241,16 +281,20 @@ export function Aufnahmestudio() {
 
 function Kopf({
   fertig,
+  neue,
   packt,
   onHerunterladen,
   onAllesLoeschen,
 }: {
   fertig: number;
+  /** Nur die hier neu aufgenommenen — die kommen ins ZIP. */
+  neue: number;
   packt: boolean;
   onHerunterladen: () => void;
   onAllesLoeschen: () => void;
 }) {
   const anteil = Math.round((fertig / ANZAHL_SAETZE) * 100);
+  const fehlen = ANZAHL_SAETZE - fertig;
   return (
     <header className="sticky top-0 z-20 border-b border-black/5 bg-creme/95 backdrop-blur">
       <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-3 px-4 py-3">
@@ -269,18 +313,24 @@ function Kopf({
               {fertig} / {ANZAHL_SAETZE}
             </span>
           </div>
+          <p className="mt-0.5 text-xs" style={{ color: "#8b978a" }}>
+            {fehlen === 0
+              ? "Alle Sätze sind eingesprochen."
+              : `Noch ${fehlen} ${fehlen === 1 ? "Satz" : "Sätze"} offen` +
+                (neue ? ` · ${neue} neu aufgenommen` : "")}
+          </p>
         </div>
 
         <button
           type="button"
           onClick={onHerunterladen}
-          disabled={!fertig || packt}
+          disabled={!neue || packt}
           className="rounded-full px-5 py-2 text-sm font-semibold text-white shadow-sm disabled:opacity-40"
           style={{ background: "linear-gradient(180deg, #f0813c, #d9541c)" }}
         >
-          {packt ? "packt …" : "Alle herunterladen"}
+          {packt ? "packt …" : neue ? `${neue} neue herunterladen` : "Neue herunterladen"}
         </button>
-        {fertig > 0 && (
+        {neue > 0 && (
           <button
             type="button"
             onClick={onAllesLoeschen}
@@ -311,8 +361,8 @@ function Anleitung({ endung }: { endung: string }) {
           aufnehmen — die alte Aufnahme wird ersetzt.
         </li>
         <li>
-          Am Ende oben auf <strong>Alle herunterladen</strong>. Du bekommst ein ZIP
-          mit fertig benannten Dateien.
+          Am Ende oben auf <strong>herunterladen</strong>. Du bekommst ein ZIP mit
+          fertig benannten Dateien — nur mit den hier neu aufgenommenen.
         </li>
         <li>
           Das ZIP entpacken und die Dateien auf GitHub nach{" "}
@@ -321,6 +371,11 @@ function Anleitung({ endung }: { endung: string }) {
           Stimme im Spiel.
         </li>
       </ol>
+      <p className="mt-3" style={{ color: "#8b978a" }}>
+        Grün hinterlegte Sätze sind schon erledigt: entweder liegen sie bereits im
+        Spiel (<em>schon im Spiel</em>) oder du hast sie eben aufgenommen. Anhören
+        geht bei beiden — so hörst du deine alte Aufnahme, bevor du sie ersetzt.
+      </p>
       <p className="mt-3" style={{ color: "#8b978a" }}>
         Die Aufnahmen bleiben in diesem Browser gespeichert — du kannst das Fenster
         schließen und später weitermachen. Aufnahmeformat auf diesem Gerät:{" "}
@@ -335,6 +390,7 @@ function Zeile({
   id,
   text,
   aufnahme,
+  imSpiel,
   nimmtAuf,
   gesperrt,
   spielt,
@@ -347,6 +403,8 @@ function Zeile({
   id: LineId;
   text: string;
   aufnahme?: Aufnahme;
+  /** Für diesen Satz liegt schon eine Aufnahme im Spiel. */
+  imSpiel: boolean;
   nimmtAuf: boolean;
   gesperrt: boolean;
   spielt: boolean;
@@ -356,11 +414,12 @@ function Zeile({
   onAnhoeren: () => void;
   onLoeschen: () => void;
 }) {
+  const erledigt = Boolean(aufnahme) || imSpiel;
   return (
     <li
       className="flex flex-wrap items-center gap-3 rounded-2xl p-3 transition-colors"
       style={{
-        background: nimmtAuf ? "#fbe4d8" : aufnahme ? "#eef4e8" : "rgba(255,255,255,0.7)",
+        background: nimmtAuf ? "#fbe4d8" : erledigt ? "#eef4e8" : "rgba(255,255,255,0.7)",
       }}
     >
       <div className="min-w-0 flex-1">
@@ -370,10 +429,20 @@ function Zeile({
         <code className="text-xs" style={{ color: "#9aa697" }}>
           {id}.{aufnahme?.endung ?? "…"}
         </code>
+        {imSpiel && !aufnahme && (
+          <span className="ml-2 text-xs" style={{ color: "#5a8c28" }}>
+            schon im Spiel
+          </span>
+        )}
+        {imSpiel && aufnahme && (
+          <span className="ml-2 text-xs" style={{ color: "#c07020" }}>
+            neu — ersetzt die alte
+          </span>
+        )}
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        {aufnahme && !nimmtAuf && (
+        {erledigt && !nimmtAuf && (
           <button
             type="button"
             onClick={onAnhoeren}
@@ -402,11 +471,11 @@ function Zeile({
             disabled={gesperrt}
             className="rounded-full px-4 py-2 text-sm font-semibold shadow-sm disabled:opacity-35"
             style={{
-              background: aufnahme ? "rgba(0,0,0,0.06)" : "#f0813c",
-              color: aufnahme ? "#5f6b5c" : "#fff",
+              background: erledigt ? "rgba(0,0,0,0.06)" : "#f0813c",
+              color: erledigt ? "#5f6b5c" : "#fff",
             }}
           >
-            {aufnahme ? "Nochmal" : "● Aufnehmen"}
+            {erledigt ? "Nochmal" : "● Aufnehmen"}
           </button>
         )}
 
