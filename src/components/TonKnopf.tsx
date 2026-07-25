@@ -23,10 +23,10 @@ export function TonKnopf({ dunkel = false }: { dunkel?: boolean }) {
       type="button"
       onClick={() => voice.setMuted(!stumm)}
       aria-label={stumm ? "Ton einschalten" : "Ton ausschalten"}
-      className="absolute top-[2cqw] right-[2cqw] z-40 grid size-[7cqw] place-items-center rounded-full shadow-md transition active:scale-90"
+      className="absolute top-[2cqw] right-[2cqw] z-40 grid size-[8cqw] place-items-center rounded-full shadow-md transition active:scale-90"
       style={{ background: dunkel ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.82)" }}
     >
-      <svg viewBox="0 0 24 24" className="size-[4cqw]" aria-hidden>
+      <svg viewBox="0 0 24 24" className="size-[4.6cqw]" aria-hidden>
         <path d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4z" fill={farbe} />
         {stumm ? (
           <path

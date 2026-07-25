@@ -6,7 +6,6 @@
   "start_url": "/",
   "scope": "/",
   "display": "fullscreen",
-  "orientation": "landscape",
   "background_color": "#fdf6ec",
   "theme_color": "#fdf6ec",
   "categories": ["education", "kids", "games"],

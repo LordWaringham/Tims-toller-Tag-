@@ -39,10 +39,10 @@ export function Sprechblase({
               type="button"
               onClick={() => id && voice.speak(id)}
               aria-label="Nochmal vorlesen"
-              className="grid size-[6cqw] shrink-0 place-items-center rounded-full transition active:scale-90"
+              className="grid size-[8cqw] shrink-0 place-items-center rounded-full transition active:scale-90"
               style={{ background: dunkel ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.7)" }}
             >
-              <svg viewBox="0 0 24 24" className="size-[3.6cqw]" aria-hidden>
+              <svg viewBox="0 0 24 24" className="size-[4.4cqw]" aria-hidden>
                 <path
                   d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4z"
                   fill={dunkel ? "#fdf6ec" : "#5f6b5c"}

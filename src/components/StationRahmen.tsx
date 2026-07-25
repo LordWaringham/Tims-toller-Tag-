@@ -107,10 +107,10 @@ export function StationRahmen({
           onZurueck();
         }}
         aria-label="Zurück zur Übersicht"
-        className="absolute top-[2cqw] left-[2cqw] z-40 grid size-[7cqw] place-items-center rounded-full shadow-md transition active:scale-90"
+        className="absolute top-[2cqw] left-[2cqw] z-40 grid size-[8cqw] place-items-center rounded-full shadow-md transition active:scale-90"
         style={{ background: dunkel ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.82)" }}
       >
-        <svg viewBox="0 0 24 24" className="size-[4cqw]" aria-hidden>
+        <svg viewBox="0 0 24 24" className="size-[4.6cqw]" aria-hidden>
           <path
             d="M15 5l-7 7 7 7"
             fill="none"

@@ -45,9 +45,9 @@ export function Stickerheft({
           type="button"
           onClick={onZurueck}
           aria-label="Zurück"
-          className="absolute top-[2cqw] left-[2cqw] z-40 grid size-[7cqw] place-items-center rounded-full bg-white/85 shadow-md transition active:scale-90"
+          className="absolute top-[2cqw] left-[2cqw] z-40 grid size-[8cqw] place-items-center rounded-full bg-white/85 shadow-md transition active:scale-90"
         >
-          <svg viewBox="0 0 24 24" className="size-[4cqw]" aria-hidden>
+          <svg viewBox="0 0 24 24" className="size-[4.6cqw]" aria-hidden>
             <path
               d="M15 5l-7 7 7 7"
               fill="none"
