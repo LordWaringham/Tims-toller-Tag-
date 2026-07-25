@@ -61,6 +61,7 @@ export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProp
 
   const landen = (farbe: Farbe, zone: string | null) => {
     if (zone !== `blume-${farbe.id}`) return false;
+    sfx.flutter(); // die Flügel kommen zur Ruhe
     sfx.sparkle();
     sfx.chime(gelandet.length + 3);
     const neu = [...gelandet, farbe.id];

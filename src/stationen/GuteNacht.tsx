@@ -22,13 +22,13 @@ const STATION = STATIONS[10];
  * am Himmel stehen Sternbilder ohnehin in jeder Lage.
  */
 const STERNE = [
-  { id: 0, x: 68, y: 30 },
+  { id: 0, x: 67, y: 31 },
   { id: 1, x: 74, y: 26 },
-  { id: 2, x: 80, y: 22 },
-  { id: 3, x: 87, y: 20 },
-  { id: 4, x: 94, y: 23 },
+  { id: 2, x: 81, y: 21 },
+  { id: 3, x: 88, y: 19 },
+  { id: 4, x: 95, y: 23 },
   { id: 5, x: 90, y: 31 },
-  { id: 6, x: 80, y: 31 },
+  { id: 6, x: 79, y: 33 },
 ];
 
 const LINIEN: [number, number][] = [
@@ -135,10 +135,11 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             key={stern.id}
             x={stern.x}
             y={stern.y}
-            // Sechs statt neun: Bei größeren Zielen überlappten sich zwei
-            // Sterne so weit, dass ein Tipp den falschen traf — zwei blieben
-            // dunkel, und die Station ging nie weiter.
-            groesse={6}
+            // So groß, wie es geht, ohne dass sich zwei Tippflächen
+            // überlappen — sonst trifft ein Tipp den Nachbarn, und zwei
+            // Sterne bleiben für immer dunkel. Am kleinsten Abstand im
+            // Sternbild (7,2 cqw) hängt diese Zahl.
+            groesse={7}
             aktiv={phase === "sterne" && !an}
             label="Stern"
             onTipp={() => sternAntippen(stern.id)}

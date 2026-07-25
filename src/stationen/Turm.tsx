@@ -146,7 +146,9 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         style={{
           left: "68%",
           top: `${BODEN}%`,
-          transform: "translateX(-50%)",
+          // `translate` statt `transform` — Motion würde `transform` beim
+          // Wackeln überschreiben und die Zentrierung mitnehmen.
+          translate: "-50%",
           transformOrigin: "bottom center",
         }}
         animate={wackelt ? { rotate: [0, -1.6, 1.4, -0.7, 0] } : { rotate: 0 }}
@@ -160,7 +162,7 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             style={{
               left: "50%",
               bottom: `${i * STEIN_HOEHE}cqw`,
-              transform: "translateX(-50%)",
+              translate: "-50%",
             }}
             initial={{ y: "-14cqw", opacity: 0, scale: 1.1 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}

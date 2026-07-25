@@ -121,3 +121,38 @@ export function bericht(name, fehler) {
     console.log(`\n✅ ${name}: ohne Fehler`);
   }
 }
+
+/**
+ * Ragt etwas Antippbares über den Rand der Bühne hinaus?
+ *
+ * Genau so war das zehnte Schaf halb aus dem Bild gerutscht: Es war da, es
+ * zählte mit, aber ein Kind konnte es nur zur Hälfte treffen. Ein Blick auf
+ * den Bildschirm zeigt das sofort — eine Zusicherung tut es zuverlässiger.
+ */
+export async function randPruefen(page, wo, toleranz = 4) {
+  const buehne = await page.locator(".buehne").boundingBox();
+  if (!buehne) return [];
+  const raus = await page.locator(".buehne button:not([disabled])").evaluateAll(
+    (els, [b, tol]) =>
+      els
+        .map((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width < 2 || r.height < 2) return null;
+          const stil = getComputedStyle(el);
+          if (stil.visibility === "hidden" || stil.display === "none") return null;
+          const ueber = {
+            links: b.x - r.left,
+            rechts: r.right - (b.x + b.width),
+            oben: b.y - r.top,
+            unten: r.bottom - (b.y + b.height),
+          };
+          const schlimmste = Object.entries(ueber).sort((a, c) => c[1] - a[1])[0];
+          if (schlimmste[1] <= tol) return null;
+          return `${el.getAttribute("aria-label") ?? el.textContent?.trim()?.slice(0, 20) ?? "?"} ` +
+            `ragt ${Math.round(schlimmste[1])}px nach ${schlimmste[0]} hinaus`;
+        })
+        .filter(Boolean),
+    [{ x: buehne.x, y: buehne.y, width: buehne.width, height: buehne.height }, toleranz],
+  );
+  return raus.map((m) => `${wo}: ${m}`);
+}

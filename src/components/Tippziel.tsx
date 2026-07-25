@@ -78,7 +78,7 @@ export function Tippziel({
 }
 
 /** true, sobald das Kind eine Weile nichts getan hat. */
-export function useHinweis(aktiv: boolean, verzoegerung = 5000) {
+function useHinweis(aktiv: boolean, verzoegerung = 5000) {
   const [faellig, setFaellig] = useState(false);
 
   useEffect(() => {

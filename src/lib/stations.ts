@@ -145,7 +145,7 @@ export const STATIONS: Station[] = [
 
 export const STATION_IDS = STATIONS.map((s) => s.id);
 
-export function stationIndex(id: StationId) {
+function stationIndex(id: StationId) {
   return STATIONS.findIndex((s) => s.id === id);
 }
 

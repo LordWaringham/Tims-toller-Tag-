@@ -75,13 +75,6 @@ export function setMuted(value: boolean) {
   listeners.forEach((l) => l(muted));
 }
 
-export function onMuteChange(fn: (m: boolean) => void) {
-  listeners.add(fn);
-  return () => {
-    listeners.delete(fn);
-  };
-}
-
 export function restoreMuted() {
   if (typeof localStorage === "undefined") return;
   const gespeichert = localStorage.getItem("ttt-muted") === "1";

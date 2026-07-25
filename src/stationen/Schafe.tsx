@@ -128,17 +128,30 @@ export function Schafe({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         const aktiv = phase === "zaehlen" ? !gezaehltJa : !gestreicheltJa;
 
         return (
-          <motion.button
+          /*
+           * Position außen, Animation innen.
+           *
+           * Beides am selben Element ging schief: Motion verwaltet `transform`
+           * selbst, sobald etwas animiert wird, und überschrieb das
+           * `translate(-50%, -50%)`. Die ganze Herde saß dadurch um ihre halbe
+           * Größe nach rechts unten verschoben — das zehnte Schaf ragte
+           * dadurch aus dem Bild, obwohl seine Zahl im Code passte.
+           */
+          <div
             key={schaf.id}
-            type="button"
-            aria-label={`Schaf ${i + 1}`}
-            disabled={!aktiv}
-            className="absolute z-20"
+            className="huelle z-20"
             style={{
               left: `${schaf.x}%`,
               top: `${schaf.y}%`,
               width: `${18 * schaf.groesse}cqw`,
-              transform: "translate(-50%, -50%)",
+            }}
+          >
+          <motion.button
+            type="button"
+            aria-label={`Schaf ${i + 1}`}
+            disabled={!aktiv}
+            className="block w-full"
+            style={{
               background: "none",
               border: "none",
               padding: 0,
@@ -196,6 +209,7 @@ export function Schafe({ onGeschafft, onWeiter, onZurueck }: StationProps) {
               )}
             </AnimatePresence>
           </motion.button>
+          </div>
         );
       })}
 

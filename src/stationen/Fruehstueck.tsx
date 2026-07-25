@@ -226,7 +226,10 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
                 left: `${f.x}%`,
                 top: `${f.y}%`,
                 width: "8.5cqw",
-                transform: "translate(-50%, -50%)",
+                // `translate` statt `transform`: Motion verwaltet `transform`
+                // selbst und überschriebe die Zentrierung — die Früchte lägen
+                // um ihre halbe Größe nach rechts unten versetzt.
+                translate: "-50% -50%",
               }}
               initial={{ scale: 0, y: "-10cqw", rotate: 0 }}
               animate={{ scale: 1, y: 0, rotate: f.dreh }}

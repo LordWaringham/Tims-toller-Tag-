@@ -134,7 +134,9 @@ export function Blumen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           left: "50%",
           top: "26%",
           width: "24cqw",
-          transform: "translate(-50%, -50%)",
+          // `translate` statt `transform`: Motion braucht `transform` fürs
+          // Ziehen und Kippen und würde die Zentrierung überschreiben.
+          translate: "-50% -50%",
           touchAction: "none",
           cursor: "grab",
         }}

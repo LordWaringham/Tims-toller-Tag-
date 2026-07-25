@@ -1,4 +1,4 @@
-import { ADRESSE, BILDER, browserStarten, spielStarten } from "./helfer.mjs";
+import { ADRESSE, BILDER, browserStarten, spielStarten, randPruefen } from "./helfer.mjs";
 
 const URL = ADRESSE + "/";
 const SHOT = BILDER;
@@ -15,6 +15,8 @@ page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
 
 const shot = async (name) => {
   await page.screenshot({ path: `${SHOT}/${name}.png` });
+  // Bei der Gelegenheit gleich nachsehen, ob alles im Bild liegt.
+  fehler.push(...(await randPruefen(page, name)));
   console.log("  📸", name);
 };
 
@@ -310,6 +312,9 @@ await page.getByRole("button", { name: /Zur Tageskarte/ }).click({ force: true }
 await page.waitForTimeout(900);
 await shot("30-tageskarte-voll");
 await page.locator("button").filter({ hasText: /von 11/ }).first().click({ force: true });
+// Die Sticker blenden versetzt ein — sonst zeigt das Bild den letzten
+// noch halb eingeblendet, als wäre er nicht gesammelt.
+await page.waitForTimeout(1200);
 await page.waitForTimeout(900);
 await shot("31-stickerheft");
 
