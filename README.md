@@ -86,9 +86,23 @@ Die vollständige Liste mit Dateinamen und Text steht in
 fehlenden springt die Gerätestimme ein, man kann also jederzeit ein paar
 nachreichen.
 
+### Stille vor dem ersten Wort
+
+Zwischen dem Tippen auf *Aufnehmen* und dem ersten Wort vergeht fast immer ein
+Moment. Im Spiel wird daraus eine Pause vor jedem Satz — bei 77 Aufnahmen waren
+das zusammen 48 Sekunden Warten. `npm run audio:kuerzen` schneidet sie weg,
+ohne neu zu kodieren (`ffmpeg -c copy`, also ohne Qualitätsverlust), und lässt
+60 ms vor dem ersten Wort stehen, damit kein Anlaut abreißt.
+
+Nach jedem Hochladen neuer Aufnahmen lohnt sich ein Durchlauf. Dafür wird
+ffmpeg gebraucht — im PATH, über `FFMPEG=...` oder per
+`npm install --no-save ffmpeg-static`.
+
 ```bash
-npm run sprechtexte   # SPRECHTEXTE.md neu erzeugen (nach Textänderungen)
-npm run audio         # nachsehen, welche Aufnahmen vorhanden sind
+npm run sprechtexte      # SPRECHTEXTE.md neu erzeugen (nach Textänderungen)
+npm run audio            # nachsehen, welche Aufnahmen vorhanden sind
+npm run audio:kuerzen    # Stille am Anfang und Ende wegschneiden
+npm run audio:kuerzen -- --pruefen   # nur nachsehen, nichts ändern
 ```
 
 ## Entwickeln

@@ -10,6 +10,7 @@
     "lint": "eslint",
     "sprechtexte": "node scripts/sprechtexte.mjs",
     "audio": "node scripts/audio-manifest.mjs",
+    "audio:kuerzen": "node scripts/audio-kuerzen.mjs",
     "test": "node tests/alle.mjs",
     "test:durchlauf": "node tests/durchspielen.mjs",
     "test:groessen": "node tests/groessen.mjs",
