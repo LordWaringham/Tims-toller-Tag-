@@ -22,7 +22,7 @@ await page.goto(ADRESSE + "/", { waitUntil: "networkidle" });
 // Zwei Kindern einen Stand geben, dem dritten nicht.
 await page.evaluate(() => {
   localStorage.setItem(
-    "tims-toller-tag/v1/luisa",
+    "tims-toller-tag/v1/luise",
     JSON.stringify({ fertig: ["aufwachen", "anziehen", "fruehstueck"], tagGeschafft: false }),
   );
   localStorage.setItem(
@@ -45,7 +45,7 @@ for (const zeile of text.split("\n").filter((z) => /Stationen/.test(z))) {
 }
 
 // Jedes Kind muss mit seinem eigenen Stand auftauchen.
-if (!/Luisa[\s\S]{0,40}3 von 11/.test(text)) fehler.push("Luisas Stand (3) fehlt");
+if (!/Luise[\s\S]{0,40}3 von 11/.test(text)) fehler.push("Luises Stand (3) fehlt");
 if (!/Maya[\s\S]{0,40}1 von 11/.test(text)) fehler.push("Mayas Stand (1) fehlt");
 if (!/Marla[\s\S]{0,40}0 von 11/.test(text)) fehler.push("Marlas Stand (0) fehlt");
 
@@ -57,16 +57,16 @@ if (vorher !== 2) fehler.push(`Erwartet 2 Zurücksetz-Knöpfe, gefunden ${vorher
 
 await zuruecksetzen.first().click({ force: true });
 await page.waitForTimeout(400);
-const luisaDanach = await page.evaluate(() =>
-  localStorage.getItem("tims-toller-tag/v1/luisa"),
+const luiseDanach = await page.evaluate(() =>
+  localStorage.getItem("tims-toller-tag/v1/luise"),
 );
-console.log("Luisa im Speicher danach:", luisaDanach);
-if (luisaDanach && JSON.parse(luisaDanach).fertig.length !== 0) {
+console.log("Luise im Speicher danach:", luiseDanach);
+if (luiseDanach && JSON.parse(luiseDanach).fertig.length !== 0) {
   fehler.push("Einzelnes Zurücksetzen hat nichts bewirkt");
 }
 const mayaDanach = await page.evaluate(() => localStorage.getItem("tims-toller-tag/v1/maya"));
 if (!mayaDanach || JSON.parse(mayaDanach).fertig.length !== 1) {
-  fehler.push("Mayas Stand wurde mit zurückgesetzt, obwohl nur Luisa gemeint war");
+  fehler.push("Mayas Stand wurde mit zurückgesetzt, obwohl nur Luise gemeint war");
 }
 
 // Und alles zurücksetzen ebenso.
@@ -75,7 +75,7 @@ await page.waitForTimeout(300);
 await page.getByRole("button", { name: /Ja, bei allen dreien/ }).click({ force: true });
 await page.waitForTimeout(500);
 const alle = await page.evaluate(() =>
-  ["luisa", "maya", "marla"].map((k) => {
+  ["luise", "maya", "marla"].map((k) => {
     const roh = localStorage.getItem(`tims-toller-tag/v1/${k}`);
     return roh ? JSON.parse(roh).fertig.length : 0;
   }),

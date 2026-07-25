@@ -29,10 +29,10 @@ Insgesamt: **77 Sätze**.
 | `sticker.mp3` | Dafür bekommst du einen Sticker. |
 | `gesperrt.mp3` | Das kommt gleich. Wir machen alles der Reihe nach. |
 | `finale.mp3` | Das war ein toller Tag. Bis morgen! |
-| `hallo-luisa.mp3` | Hallo Luisa! Schön, dass du da bist. |
+| `hallo-luise.mp3` | Hallo Luise! Schön, dass du da bist. |
 | `hallo-maya.mp3` | Hallo Maya! Schön, dass du da bist. |
 | `hallo-marla.mp3` | Hallo Marla! Schön, dass du da bist. |
-| `widmung.mp3` | Für Luisa, Maya und Marla. Von Onkel Tom. |
+| `widmung.mp3` | Für Luise, Maya und Marla. Von Onkel Tom. |
 | `finale-stolz.mp3` | Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an! |
 
 ## Zahlen zum Mitzählen

@@ -29,10 +29,30 @@ function schluessel(kindId: string) {
   return `${KEY}/${kindId}`;
 }
 
+/**
+ * Holt den gespeicherten Text — notfalls unter der früheren ID.
+ *
+ * „Luisa" hieß eine Weile lang so und heißt in Wahrheit Luise. Wer in der
+ * Zwischenzeit gespielt hat, soll seinen Stand behalten und nicht wieder bei
+ * Station eins anfangen müssen.
+ */
+function rohLesen(kindId: string): string | null {
+  const jetzt = localStorage.getItem(schluessel(kindId));
+  if (jetzt) return jetzt;
+  const frueher = KINDER.find((k) => k.id === kindId)?.frueher;
+  if (!frueher) return null;
+  const alt = localStorage.getItem(schluessel(frueher));
+  if (alt) {
+    localStorage.setItem(schluessel(kindId), alt);
+    localStorage.removeItem(schluessel(frueher));
+  }
+  return alt;
+}
+
 function lesen(kindId: string): Progress {
   if (typeof localStorage === "undefined") return LEER;
   try {
-    const roh = localStorage.getItem(schluessel(kindId));
+    const roh = rohLesen(kindId);
     if (!roh) return LEER;
     const gelesen = JSON.parse(roh) as Partial<Progress>;
     const gueltig = new Set(STATIONS.map((s) => s.id));

@@ -22,10 +22,10 @@ export const LINES = {
   finale: "Das war ein toller Tag. Bis morgen!",
   // Diese vier bleiben still, solange keine Aufnahme dafür vorliegt —
   // die Gerätestimme mitten in eingesprochenen Sätzen klingt fremd.
-  "hallo-luisa": "Hallo Luisa! Schön, dass du da bist.",
+  "hallo-luise": "Hallo Luise! Schön, dass du da bist.",
   "hallo-maya": "Hallo Maya! Schön, dass du da bist.",
   "hallo-marla": "Hallo Marla! Schön, dass du da bist.",
-  widmung: "Für Luisa, Maya und Marla. Von Onkel Tom.",
+  widmung: "Für Luise, Maya und Marla. Von Onkel Tom.",
   "finale-stolz": "Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an!",
 
   // Zahlen zum Mitzählen

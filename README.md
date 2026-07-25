@@ -1,6 +1,6 @@
 # Tims toller Tag — das Spiel
 
-Ein Mitmachspiel nach dem Bilderbuch *„Tims toller Tag“* — für **Luisa, Maya
+Ein Mitmachspiel nach dem Bilderbuch *„Tims toller Tag“* — für **Luise, Maya
 und Marla**, von **Onkel Tom**. Jede Buchseite ist eine Station: vom Aufwachen
 bis zum Gutenachtgruß, mit denselben Illustrationen und denselben Sätzen wie
 im Buch.
@@ -118,7 +118,7 @@ src/
     voice.ts      Aufnahme bevorzugt, sonst Gerätestimme
     sfx.ts        Geräusche, im Browser erzeugt — keine Audiodateien
     stations.ts   Reihenfolge, Sticker, Himmelsfarben
-    kinder.ts     Luisa, Maya, Marla — und von wem das Spiel kommt
+    kinder.ts     Luise, Maya, Marla — und von wem das Spiel kommt
     progress.ts   Fortschritt je Kind im localStorage
 public/
   scenes/         die zwölf Illustrationen aus dem Buch

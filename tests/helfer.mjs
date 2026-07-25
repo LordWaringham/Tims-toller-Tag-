@@ -45,7 +45,7 @@ export async function standSetzen(page, fertigeStationen) {
 }
 
 /** Nach dem Startknopf fragt das Spiel, wer heute spielt. */
-export async function kindWaehlen(page, name = "Luisa") {
+export async function kindWaehlen(page, name = "Luise") {
   const knopf = page.getByRole("button", { name: new RegExp(`${name} spielt`) });
   await knopf.waitFor({ timeout: 8000 });
   await knopf.click({ force: true });

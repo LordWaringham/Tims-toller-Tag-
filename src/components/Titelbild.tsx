@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
-import { KINDER, SCHENKER } from "@/lib/kinder";
+import { NAMEN, SCHENKER } from "@/lib/kinder";
 
 /** Startbildschirm mit dem Buchcover. */
 export function Titelbild({
@@ -51,8 +51,13 @@ export function Titelbild({
           aria-hidden
         />
 
-        {/* Der Spielen-Knopf sitzt bewusst unter Tims Gesicht, nicht darauf. */}
-        <div className="absolute inset-0 flex flex-col items-center py-[5cqw]">
+        {/*
+          Tim steht mitten im Bild und winkt — was vor ihm liegt, verdeckt ihn.
+          Deshalb nur drei Dinge übereinander: Titel oben, Knopf in der Mitte,
+          die Widmung als eine einzige Zeile unten. Der Erwachsenenknopf sitzt
+          in der Ecke, wo ihn ein Kind nicht versehentlich trifft.
+        */}
+        <div className="absolute inset-0 flex flex-col items-center py-[4cqw]">
           <motion.h1
             initial={{ y: "-2cqw", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -63,17 +68,7 @@ export function Titelbild({
             Tims toller Tag
           </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="mt-[1.2cqw] rounded-full px-[3.4cqw] py-[0.9cqw] text-[3cqw] font-semibold"
-            style={{ background: "rgba(255,255,255,0.72)", color: "#54604f" }}
-          >
-            Für {KINDER.map((k) => k.name).join(", ").replace(/, ([^,]*)$/, " und $1")}
-          </motion.p>
-
-          <div className="flex-[1.35]" />
+          <div className="flex-[1.5]" />
 
           <motion.button
             type="button"
@@ -91,27 +86,29 @@ export function Titelbild({
             {weiterspielen ? "Weiterspielen" : "Spielen"}
           </motion.button>
 
-          <div className="flex-[0.5]" />
-
+          {/* Direkt unter dem Knopf, nicht ganz unten — dort sitzt der
+              Erwachsenenknopf, und beide nebeneinander überschnitten sich. */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.8 }}
-            className="mb-[1.6cqw] rounded-full px-[3cqw] py-[0.8cqw] text-[2.8cqw] font-semibold"
-            style={{ background: "rgba(255,255,255,0.72)", color: "#54604f" }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="mt-[2.6cqw] rounded-full px-[3.6cqw] py-[1cqw] text-[2.9cqw] font-semibold whitespace-nowrap"
+            style={{ background: "rgba(255,255,255,0.75)", color: "#54604f" }}
           >
-            von {SCHENKER}
+            Für {NAMEN} — von {SCHENKER}
           </motion.p>
 
-          <button
-            type="button"
-            onClick={onEltern}
-            className="rounded-full px-[3.5cqw] py-[1.4cqw] text-[2.6cqw] font-medium shadow-sm"
-            style={{ background: "rgba(255,255,255,0.8)", color: "#5f6b5c" }}
-          >
-            Erläuterungen für Erwachsene
-          </button>
+          <div className="flex-1" />
         </div>
+
+        <button
+          type="button"
+          onClick={onEltern}
+          className="absolute right-[2.4cqw] bottom-[2.4cqw] rounded-full px-[2.8cqw] py-[1.1cqw] text-[2.3cqw] font-medium shadow-sm"
+          style={{ background: "rgba(255,255,255,0.8)", color: "#5f6b5c" }}
+        >
+          Erläuterungen für Erwachsene
+        </button>
       </div>
     </div>
   );

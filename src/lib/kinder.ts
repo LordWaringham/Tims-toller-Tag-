@@ -12,16 +12,23 @@ export interface Kind {
   /** Wird für ihren Knopf und ihr Stickerheft verwendet. */
   farbe: string;
   hell: string;
+  /** Frühere ID, falls der Name einmal falsch geschrieben war. */
+  frueher?: string;
 }
 
 export const KINDER: Kind[] = [
-  { id: "luisa", name: "Luisa", farbe: "#d95f8a", hell: "#f8c8da" },
+  { id: "luise", name: "Luise", farbe: "#d95f8a", hell: "#f8c8da", frueher: "luisa" },
   { id: "maya", name: "Maya", farbe: "#3e8fb0", hell: "#b7dced" },
   { id: "marla", name: "Marla", farbe: "#6ba32f", hell: "#cfe8a8" },
 ];
 
 /** Von wem das Spiel kommt. */
 export const SCHENKER = "Onkel Tom";
+
+/** „Luise, Maya und Marla“ — für Widmungen und Anreden. */
+export const NAMEN = KINDER.map((k) => k.name)
+  .join(", ")
+  .replace(/, ([^,]*)$/, " und $1");
 
 export function kindFinden(id: string | null): Kind | null {
   if (!id) return null;
