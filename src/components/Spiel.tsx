@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { STATIONS, nextStation, type StationId } from "@/lib/stations";
 import { useProgress, useHatJemandGespielt, fortschrittVon } from "@/lib/progress";
@@ -13,7 +13,7 @@ import { Tageskarte } from "./Tageskarte";
 import { Stickerheft } from "./Stickerheft";
 import { Elternseite } from "./Elternseite";
 import { Finale } from "./Finale";
-import { Querformat } from "./Querformat";
+import { KindProvider } from "./KindKontext";
 import type { StationProps } from "./StationRahmen";
 
 import { Aufwachen } from "@/stationen/Aufwachen";
@@ -85,9 +85,11 @@ export function Spiel() {
 
   const Station = aktuell ? SPIELE[aktuell] : null;
 
+  // Für die Stickerleiste am unteren Rand der Stationen.
+  const kindStand = useMemo(() => ({ kind, istFertig }), [kind, istFertig]);
+
   return (
-    <>
-      <Querformat />
+    <KindProvider value={kindStand}>
       <AnimatePresence mode="wait">
         <motion.main
           key={`${ansicht}-${aktuell ?? ""}-${lauf}`}
@@ -149,6 +151,6 @@ export function Spiel() {
           )}
         </motion.main>
       </AnimatePresence>
-    </>
+    </KindProvider>
   );
 }

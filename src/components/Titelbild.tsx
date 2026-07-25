@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
@@ -16,18 +17,46 @@ export function Titelbild({
   /** true, wenn schon ein Tag begonnen wurde. */
   weiterspielen: boolean;
 }) {
+  /** Läuft gerade die Begrüßung? */
+  const [laeuft, setLaeuft] = useState(false);
+  const abgebrochen = useRef(false);
+  useEffect(
+    () => () => {
+      abgebrochen.current = true;
+    },
+    [],
+  );
+
+  /*
+   * Die Begrüßung gehört auf die Startseite, nicht auf die Namensauswahl.
+   *
+   * Vorher wurde beim Tippen sofort weitergeschaltet, und „Tims toller Tag —
+   * für Luise, Maya und Marla — Hallo! Ich bin Tim" lief über einem Bild, das
+   * schon nach dem Namen fragte. Jetzt bleibt das Titelbild stehen, solange
+   * gesprochen wird, und geht danach von selbst weiter.
+   *
+   * Losgetreten wird es weiterhin vom Tippen: Ohne Nutzergeste lässt kein
+   * Browser Ton zu — ganz von allein kann die Begrüßung nicht anfangen. Wer
+   * nicht zuhören mag, tippt ein zweites Mal und ist sofort weiter.
+   */
   const starten = () => {
+    if (laeuft) {
+      voice.stopSpeaking(true);
+      onSpielen();
+      return;
+    }
     // Muss aus der Nutzergeste heraus passieren, sonst bleibt iOS stumm.
     voice.unlockAudio();
     sfx.unlockSfx();
     sfx.chime(4);
-    // Die Widmung dazwischen bleibt still, bis eine Aufnahme dafür vorliegt.
+    setLaeuft(true);
     void (async () => {
       await voice.speak("titel");
+      // Die Widmung bleibt still, bis eine Aufnahme dafür vorliegt.
       await voice.speakWennAufgenommen("widmung");
       await voice.speak("willkommen");
+      if (!abgebrochen.current) onSpielen();
     })();
-    onSpielen();
   };
 
   return (
@@ -80,10 +109,29 @@ export function Titelbild({
             className="schwebt flex items-center gap-[2.4cqw] rounded-full px-[8cqw] py-[3cqw] text-[5.6cqw] font-semibold text-white shadow-2xl"
             style={{ background: "linear-gradient(180deg, #f0813c, #d9541c)" }}
           >
-            <svg viewBox="0 0 24 24" className="size-[6cqw]" aria-hidden>
-              <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
-            </svg>
-            {weiterspielen ? "Weiterspielen" : "Spielen"}
+            {laeuft ? (
+              <motion.svg
+                viewBox="0 0 24 24"
+                className="size-[6cqw]"
+                animate={{ scale: [1, 1.16, 1] }}
+                transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
+                aria-hidden
+              >
+                <path
+                  d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4zM16 8.6a5 5 0 010 6.8M18.6 6a8.5 8.5 0 010 12"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </motion.svg>
+            ) : (
+              <svg viewBox="0 0 24 24" className="size-[6cqw]" aria-hidden>
+                <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+              </svg>
+            )}
+            {laeuft ? "Weiter" : weiterspielen ? "Weiterspielen" : "Spielen"}
           </motion.button>
 
           {/* Direkt unter dem Knopf, nicht ganz unten — dort sitzt der

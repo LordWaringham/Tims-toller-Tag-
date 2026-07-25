@@ -34,28 +34,45 @@ export async function browserStarten(zusatzArgumente = []) {
   return chromium.launch(startOptionen(zusatzArgumente));
 }
 
-/** Setzt den Spielstand, damit eine Station direkt erreichbar ist. */
-export async function standSetzen(page, fertigeStationen) {
-  await page.evaluate((fertig) => {
-    localStorage.setItem(
-      "tims-toller-tag/v1",
-      JSON.stringify({ fertig, tagGeschafft: fertig.length >= 11 }),
-    );
-  }, fertigeStationen);
+/** Setzt den Spielstand eines Kindes, damit eine Station direkt erreichbar ist. */
+export async function standSetzen(page, fertigeStationen, kindId = "luise") {
+  await page.evaluate(
+    ([fertig, kind]) => {
+      localStorage.setItem(
+        `tims-toller-tag/v1/${kind}`,
+        JSON.stringify({ fertig, tagGeschafft: fertig.length >= 11 }),
+      );
+    },
+    [fertigeStationen, kindId],
+  );
 }
 
 /** Nach dem Startknopf fragt das Spiel, wer heute spielt. */
 export async function kindWaehlen(page, name = "Luise") {
   const knopf = page.getByRole("button", { name: new RegExp(`${name} spielt`) });
-  await knopf.waitFor({ timeout: 8000 });
+  await knopf.waitFor({ timeout: 12000 });
   await knopf.click({ force: true });
   await page.waitForTimeout(600);
 }
 
-/** Der Drehhinweis liegt im Hochformat vor dem Spiel — für Tests wegtippen. */
-export async function drehhinweisWegtippen(page) {
-  const knopf = page.getByRole("button", { name: /Trotzdem hochkant/ });
-  if (await knopf.count()) await knopf.click({ force: true });
+/**
+ * Vom Titelbild bis zur Tageskarte.
+ *
+ * Auf dem Titelbild läuft seit Neuestem erst die Begrüßung, und der Knopf
+ * heißt währenddessen „Weiter". Ein zweites Tippen überspringt sie — Tests
+ * sollen nicht zehn Sekunden lang zuhören.
+ */
+export async function zurAuswahl(page) {
+  await page.getByRole("button", { name: /Spielen|Weiterspielen/ }).click({ force: true });
+  await page.waitForTimeout(350);
+  const weiter = page.getByRole("button", { name: /^Weiter$/ });
+  if (await weiter.count()) await weiter.click({ force: true });
+  await page.waitForTimeout(500);
+}
+
+export async function spielStarten(page, name = "Luise") {
+  await zurAuswahl(page);
+  await kindWaehlen(page, name);
 }
 
 /** Punkt in Prozent der Bühne in Seitenkoordinaten umrechnen. */

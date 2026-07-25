@@ -1,4 +1,4 @@
-import { ADRESSE, BILDER, browserStarten, kindWaehlen } from "./helfer.mjs";
+import { ADRESSE, BILDER, browserStarten, spielStarten, standSetzen } from "./helfer.mjs";
 import { join } from "node:path";
 const browser = await browserStarten();
 const groessen = [
@@ -12,14 +12,10 @@ for (const [name, w, h] of groessen) {
   const fehler = [];
   page.on("pageerror", (e) => fehler.push(e.message));
   await page.goto(ADRESSE + "/", { waitUntil: "networkidle" });
-  await page.evaluate(() => localStorage.setItem("tims-toller-tag/v1", JSON.stringify({
-    fertig: ["aufwachen","anziehen"], tagGeschafft: false })));
+  // Zwei Stationen vorgeben, damit die dritte offen ist.
+  await standSetzen(page, ["aufwachen", "anziehen"]);
   await page.reload({ waitUntil: "networkidle" });
-  // Im Hochformat liegt jetzt der Drehhinweis davor — fuer den Test wegtippen.
-  const hinweis = page.getByRole("button", { name: /Trotzdem hochkant/ });
-  if (await hinweis.count()) await hinweis.click({ force: true });
-  await page.getByRole("button", { name: /Spielen|Weiterspielen/ }).click({ force: true });
-  await kindWaehlen(page);
+  await spielStarten(page);
   await page.waitForTimeout(900);
   await page.screenshot({ path: join(BILDER, `gr-${name}-karte.png`) });
   await page.getByRole("button", { name: /3\. Frühstück/ }).click({ force: true });

@@ -12,9 +12,18 @@ die Reise durch den Tag fiele für sie aus.
 ## Wie es sich spielt
 
 Der Tag wird der Reihe nach gespielt. Auf der Tageskarte leuchtet immer die
-Station, bei der es weitergeht; die späteren sind noch verschlossen. Für jede
-geschaffte Station gibt es einen Sticker fürs Stickerheft, und am Ende des Tages
-steht wieder der Satz aus dem Buch: *„Das war ein toller Tag. Bis morgen!“*
+Station, bei der es weitergeht; die späteren sind noch verschlossen. Am Ende des
+Tages steht wieder der Satz aus dem Buch: *„Das war ein toller Tag. Bis morgen!“*
+
+Für jede geschaffte Station gibt es einen **Sticker** — das Bild, das im Jubel
+groß im Kreis erscheint: die Sonne fürs Aufwachen, der Gummistiefel für die
+Pfützen. Alle elf liegen während des Spiels als schmale Leiste am unteren Rand,
+die verdienten in Farbe, die kommenden als blasse Punkte. So sieht auch ein
+Kind, das noch nicht lesen kann, wie weit der Tag ist. Im Stickerheft lässt sich
+jeder antippen und erzählt seinen Satz noch einmal.
+
+Quer ist das Bild größer, hochkant geht aber genauso — das Spiel verlangt keine
+bestimmte Haltung des Geräts.
 
 | # | Station | Was zu tun ist | Was dabei geübt wird |
 |---|---------|----------------|----------------------|
@@ -42,6 +51,7 @@ verlieren mag.
 - **Große Ziele.** Tippflächen und Fangbereiche sind großzügig — Fünfjährige
   zielen ungenau, und das Spiel kommt ihnen entgegen.
 - **Sanfte Hilfe.** Wenn eine Weile nichts passiert, wackelt die richtige Stelle.
+- **Keine Vorschriften ans Gerät.** Kein „Dreh das Tablet“, kein Vollbildzwang.
 - **Keine Werbung, keine Käufe, keine Links nach außen, keine Datensammlung.**
   Der Fortschritt bleibt in `localStorage` auf dem Gerät.
 

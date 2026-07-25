@@ -14,7 +14,7 @@ Einzeln:
 ```bash
 npm run test:durchlauf   # alle elf Stationen von vorn bis hinten durchspielen
 npm run test:groessen    # Handy und Tablet, quer und hoch
-npm run test:ton         # spielt das Spiel zwei Sätze gleichzeitig ab?
+npm run test:ton         # zwei Sätze gleichzeitig? Jubel in der richtigen Folge?
 npm run test:offline     # läuft alles ohne Netz, samt Sprachaufnahmen?
 npm run test:aufnahme    # Aufnahmestudio bis zum fertigen ZIP
 npm run test:kinder      # bleiben die drei Spielstände getrennt?
@@ -37,6 +37,8 @@ Fast alle Fehler in diesem Projekt waren nur im Browser zu finden:
   Laden warteten.
 - Ohne Netz fehlten sämtliche Sprachaufnahmen.
 - Das Zurücksetzen auf der Elternseite tat nichts, sah aber aus wie Erfolg.
+- Im Jubel kam der Abschlusssatz vor dem Lob — zu einem Bild, das längst das
+  Lob zeigte.
 
 Kein einziger davon wäre einem Einheitstest aufgefallen. `test:ton` zählt
 deshalb mit, wie viele Audioelemente gleichzeitig laufen, und `test:offline`

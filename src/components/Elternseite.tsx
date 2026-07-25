@@ -37,6 +37,17 @@ export function Elternseite({ onZurueck }: { onZurueck: () => void }) {
           <ul className="mt-3 list-disc space-y-1 pl-5">
             <li>Man kann nicht verlieren. Es gibt keine Zeit, keine Punkte, kein Rot.</li>
             <li>Alles wird vorgelesen — Lesen ist nicht nötig.</li>
+            <li>
+              Für jede geschaffte Station gibt es einen Sticker — das Bild, das am Ende
+              groß im Kreis erscheint, etwa die Sonne fürs Aufwachen. Alle elf liegen
+              während des Spiels als kleine Leiste am unteren Rand: die verdienten in
+              Farbe, die kommenden als blasse Punkte. Im Stickerheft lässt sich jeder
+              antippen und erzählt seinen Satz noch einmal.
+            </li>
+            <li>
+              Quer ist das Bild größer, hochkant geht aber genauso — das Spiel verlangt
+              keine bestimmte Haltung.
+            </li>
             <li>Keine Werbung, keine Käufe, keine Verbindung nach außen.</li>
             <li>Der Fortschritt bleibt nur auf diesem Gerät.</li>
           </ul>

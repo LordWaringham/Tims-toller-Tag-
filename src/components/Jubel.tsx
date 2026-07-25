@@ -71,14 +71,21 @@ export function Jubel({
     () => LOB_IDS[Math.floor((Date.now() / 1000) % LOB_IDS.length)],
   );
 
+  /*
+   * Erst das Lob, dann der Satz aus dem Buch.
+   *
+   * Genau so steht es auch auf dem Bild: „Klasse!" groß, darunter „Aufstehen,
+   * Teddy — der Tag beginnt." Andersherum hörte man den Abschlusssatz zu einem
+   * Bild, das schon längst das Lob zeigte.
+   */
   useEffect(() => {
     if (!sichtbar) return;
     sfx.fanfare();
     let abgebrochen = false;
     (async () => {
-      await voice.speak(abschlussSatz);
-      if (abgebrochen) return;
       await voice.speak(lob);
+      if (abgebrochen) return;
+      await voice.speak(abschlussSatz);
       if (abgebrochen) return;
       await voice.speak("sticker");
     })();

@@ -5,6 +5,8 @@ import { Buehne } from "./Buehne";
 import { Sprechblase } from "./Sprechblase";
 import { Jubel } from "./Jubel";
 import { TonKnopf } from "./TonKnopf";
+import { Stickerleiste } from "./Stickerleiste";
+import { useKindStand } from "./KindKontext";
 import type { LineId } from "@/lib/lines";
 import type { Station } from "@/lib/stations";
 import * as voice from "@/lib/voice";
@@ -64,6 +66,7 @@ export function StationRahmen({
    */
   stummerRahmen?: boolean;
 }) {
+  const { istFertig } = useKindStand();
   const gesprochen = useRef<LineId | null>(null);
   // Über eine Ref, damit ein neuer Rückruf den Satz nicht erneut auslöst.
   const fertigGesprochenRef = useRef(onSatzGesprochen);
@@ -131,6 +134,13 @@ export function StationRahmen({
         weiterText={weiterText}
         dunkel={dunkel}
       />
+
+      {/*
+        Bewusst über dem Jubel: Genau in dem Moment, in dem „Dafür bekommst du
+        einen Sticker" gesagt wird, leuchtet er unten in der Leiste auf. Erst
+        dadurch wird sichtbar, wo der Sticker eigentlich hinkommt.
+      */}
+      <Stickerleiste istFertig={istFertig} gerade={station.id} dunkel={dunkel} />
     </Buehne>
   );
 }

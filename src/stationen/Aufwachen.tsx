@@ -89,9 +89,11 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       )}
 
       {/*
-        Die Sonne steigt beim Antippen auf. Weil sich hier die Position selbst
-        bewegt, ist sie ein eigener Knopf statt eines Tippziels — sonst würden
-        sich zwei Animationen um dieselbe Position streiten.
+        Die Sonne geht auf, wie eine Sonne aufgeht: Sie liegt zuerst tief und
+        blass am Rand und steigt erst beim Antippen gelb nach oben. Weil sich
+        hier die Position selbst bewegt, ist sie ein eigener Knopf statt eines
+        Tippziels — sonst würden sich zwei Animationen um dieselbe Position
+        streiten.
       */}
       <motion.button
         type="button"
@@ -100,12 +102,16 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         onClick={() => weiter(1, () => sfx.chime(5), "s01-sonne")}
         className="absolute z-20 border-none bg-transparent p-0"
         style={{ left: "82%", width: "20cqw", height: "20cqw", x: "-50%", y: "-50%" }}
+        // Ohne dieses initial wandert die Sonne beim Öffnen erst an ihren
+        // Startplatz — es sähe aus, als ginge sie unter statt auf.
+        initial={{ top: "72%" }}
         animate={{
-          top: schritt >= 1 ? "14%" : "40%",
+          // Oben, aber nicht ganz oben: dort steht die Sprechblase.
+          top: schritt >= 1 ? "22%" : "72%",
           scale: schritt === 0 ? [1, 1.07, 1] : 1,
         }}
         transition={{
-          top: { type: "spring", stiffness: 60, damping: 16 },
+          top: { type: "spring", stiffness: 42, damping: 18 },
           scale: { duration: 1.8, repeat: schritt === 0 ? Infinity : 0, ease: "easeInOut" },
         }}
         whileTap={{ scale: 0.9 }}
@@ -114,9 +120,10 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       </motion.button>
 
       {/* --------------------------------------------------------- 2 · Teddy */}
+      {/* Genau auf Teddys Gesicht — nicht auf seine Pfoten. */}
       <Tippziel
-        x={25}
-        y={62}
+        x={18}
+        y={37}
         groesse={22}
         aktiv={schritt === 1}
         label="Teddy"
@@ -139,10 +146,11 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       </Tippziel>
 
       {/* ----------------------------------------------------------- 3 · Tim */}
+      {/* Auf Tims Gesicht, nicht auf seine Schulter. */}
       <Tippziel
-        x={62}
-        y={45}
-        groesse={26}
+        x={51}
+        y={25}
+        groesse={24}
         aktiv={schritt === 2}
         label="Tim"
         onTipp={() => weiter(3, () => sfx.chime(7))}
@@ -163,7 +171,7 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       {schritt >= 3 && (
         <motion.div
           className="absolute z-30"
-          style={{ left: "62%", top: "18%", translateX: "-50%" }}
+          style={{ left: "62%", top: "56%", translateX: "-50%" }}
           initial={{ scale: 0, rotate: -8 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 240, damping: 14 }}
@@ -180,36 +188,52 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   );
 }
 
+/**
+ * Vor dem Antippen ist die Sonne grau und blass, danach gelb.
+ *
+ * Die Entfärbung liegt in `animate` und nicht in `style`: Motion übernimmt
+ * animierbare CSS-Eigenschaften beim ersten Rendern und ignoriert spätere
+ * Änderungen über `style` — die Sonne bliebe sonst für immer grau.
+ */
 function Sonne({ strahlend }: { strahlend: boolean }) {
   return (
-    <motion.svg
-      viewBox="0 0 100 100"
+    <motion.div
       className="size-full"
-      animate={{ rotate: strahlend ? 360 : 0 }}
-      transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-      aria-hidden
+      animate={{
+        filter: strahlend ? "grayscale(0) brightness(1)" : "grayscale(0.92) brightness(0.86)",
+        opacity: strahlend ? 1 : 0.72,
+      }}
+      transition={{ duration: 1.1, ease: "easeOut" }}
     >
-      {Array.from({ length: 12 }, (_, i) => (
-        <rect
-          key={i}
-          x="48"
-          y="4"
-          width="4"
-          height="14"
-          rx="2"
-          fill="#ffd166"
-          transform={`rotate(${i * 30} 50 50)`}
-          opacity={strahlend ? 0.95 : 0.5}
-        />
-      ))}
-      <circle cx="50" cy="50" r="26" fill="#ffc94d" />
-      <circle cx="50" cy="50" r="26" fill="url(#sonneGlanz)" />
-      <defs>
-        <radialGradient id="sonneGlanz" cx="35%" cy="30%">
-          <stop offset="0%" stopColor="#fff3c4" />
-          <stop offset="100%" stopColor="#ffb703" stopOpacity="0.35" />
-        </radialGradient>
-      </defs>
-    </motion.svg>
+      <motion.svg
+        viewBox="0 0 100 100"
+        className="size-full"
+        animate={{ rotate: strahlend ? 360 : 0 }}
+        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        aria-hidden
+      >
+        {Array.from({ length: 12 }, (_, i) => (
+          <rect
+            key={i}
+            x="48"
+            y="4"
+            width="4"
+            height="14"
+            rx="2"
+            fill="#ffd166"
+            transform={`rotate(${i * 30} 50 50)`}
+            opacity={strahlend ? 0.95 : 0.5}
+          />
+        ))}
+        <circle cx="50" cy="50" r="26" fill="#ffc94d" />
+        <circle cx="50" cy="50" r="26" fill="url(#sonneGlanz)" />
+        <defs>
+          <radialGradient id="sonneGlanz" cx="35%" cy="30%">
+            <stop offset="0%" stopColor="#fff3c4" />
+            <stop offset="100%" stopColor="#ffb703" stopOpacity="0.35" />
+          </radialGradient>
+        </defs>
+      </motion.svg>
+    </motion.div>
   );
 }

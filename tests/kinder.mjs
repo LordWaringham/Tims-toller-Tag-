@@ -7,7 +7,7 @@
  */
 
 import { join } from "node:path";
-import { ADRESSE, BILDER, browserStarten, fehlerSammeln, bericht } from "./helfer.mjs";
+import { ADRESSE, BILDER, browserStarten, fehlerSammeln, bericht, zurAuswahl } from "./helfer.mjs";
 
 const fehler = [];
 const browser = await browserStarten();
@@ -28,8 +28,7 @@ for (const name of ["Luise", "Maya", "Marla", "Onkel Tom"]) {
 }
 await page.screenshot({ path: join(BILDER, "titel-persoenlich.png") });
 
-await page.getByRole("button", { name: /Spielen/ }).click({ force: true });
-await page.waitForTimeout(700);
+await zurAuswahl(page);
 await page.screenshot({ path: join(BILDER, "wer-spielt.png") });
 console.log("Auswahl:", (await page.locator(".buehne").innerText()).replace(/\n/g, " · "));
 
@@ -55,8 +54,7 @@ console.log("Luise hat Station 1 geschafft");
 // --------------------------------------------- Maya faengt trotzdem bei null an
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(600);
-await page.getByRole("button", { name: /Spielen|Weiterspielen/ }).click({ force: true });
-await page.waitForTimeout(700);
+await zurAuswahl(page);
 const auswahl = await page.locator(".buehne").innerText();
 console.log("Auswahl danach:", auswahl.replace(/\n/g, " · "));
 if (!/Luise[\s\S]*1 von 11/.test(auswahl)) fehler.push("Luises Fortschritt fehlt in der Auswahl");
@@ -87,8 +85,7 @@ await page.evaluate(() => {
 });
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(600);
-await page.getByRole("button", { name: /Spielen|Weiterspielen/ }).click({ force: true });
-await page.waitForTimeout(700);
+await zurAuswahl(page);
 const nachUmbenennung = await page.locator(".buehne").innerText();
 console.log("Nach der Umbenennung:", nachUmbenennung.replace(/\n/g, " · "));
 if (!/Luise[\s\S]*2 von 11/.test(nachUmbenennung)) {

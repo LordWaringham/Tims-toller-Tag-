@@ -1,4 +1,4 @@
-import { ADRESSE, BILDER, browserStarten, kindWaehlen } from "./helfer.mjs";
+import { ADRESSE, BILDER, browserStarten, spielStarten } from "./helfer.mjs";
 
 const URL = ADRESSE + "/";
 const SHOT = BILDER;
@@ -37,8 +37,7 @@ await page.goto(URL, { waitUntil: "networkidle" });
 await page.waitForTimeout(700);
 await shot("01-titel");
 
-await page.getByRole("button", { name: /Spielen/ }).click({ force: true });
-await kindWaehlen(page);
+await spielStarten(page);
 await page.waitForTimeout(700);
 await shot("02-tageskarte");
 
