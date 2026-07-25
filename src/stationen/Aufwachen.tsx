@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Tippziel } from "@/components/Tippziel";
@@ -17,19 +17,23 @@ const STATION = STATIONS[0];
  */
 export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const [schritt, setSchritt] = useState(0); // 0 Sonne, 1 Teddy, 2 Tim, 3 fertig
-  /**
-   * Der Hinweis oben hinkt dem Bild absichtlich hinterher.
-   *
-   * Beim Antippen gibt es zwei Sätze: die Reaktion („Die Sonne scheint ins
-   * Zimmer") und den nächsten Auftrag („Jetzt wecken wir Teddy"). Würden beide
-   * am selben Zustand hängen, spräche das Spiel sie gleichzeitig. Das Bild
-   * reagiert deshalb sofort, der Hinweis erst, wenn die Reaktion verklungen ist.
-   */
-  const [hinweisSchritt, setHinweisSchritt] = useState(0);
   const [fertig, setFertig] = useState(false);
 
   const saetze: LineId[] = ["s01-intro", "s01-teddy", "s01-tim"];
-  const satz = saetze[Math.min(hinweisSchritt, 2)];
+  const satz = saetze[Math.min(schritt, 2)];
+
+  /*
+   * Diese Station spricht selbst.
+   *
+   * Auf einen Tipp folgen zwei Sätze: die Reaktion („Die Sonne scheint ins
+   * Zimmer") und der nächste Auftrag („Jetzt wecken wir Teddy"). Der Rahmen
+   * kennt nur den Auftrag und würde ihn sofort dazwischenreden. Also gibt
+   * die Station die Reihenfolge vor — Bild und Hinweistext wechseln dabei
+   * ohne Verzögerung, nur die Stimme arbeitet die beiden Sätze nacheinander ab.
+   */
+  useEffect(() => {
+    void voice.speak("s01-intro");
+  }, []);
 
   // Der Raum wird mit jedem Schritt heller.
   const helligkeit = [0.42, 0.68, 0.88, 1][Math.min(schritt, 3)];
@@ -38,12 +42,15 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const weiter = async (naechster: number, ton: () => void, gesagt?: LineId) => {
     ton();
     setSchritt(naechster);
-    if (gesagt) await voice.speak(gesagt);
-    setHinweisSchritt(naechster);
     if (naechster === 3) {
       onGeschafft();
       setTimeout(() => setFertig(true), 500);
+      return;
     }
+    const folge: LineId[] = [];
+    if (gesagt) folge.push(gesagt);
+    folge.push(saetze[naechster]);
+    await voice.speakSequence(folge, 200);
   };
 
   return (
@@ -56,6 +63,7 @@ export function Aufwachen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       abschlussSatz="s01-fertig"
       helligkeit={helligkeit}
       dunkel={schritt < 2}
+      stummerRahmen
     >
       {/* Nachtblauer Schleier, der sich mit dem Aufwachen auflöst */}
       <motion.div

@@ -37,6 +37,7 @@ export function StationRahmen({
   weiterText,
   abschlussSatz,
   onSatzGesprochen,
+  stummerRahmen = false,
 }: {
   station: Station;
   /** Der Satz, der gerade oben steht. */
@@ -54,6 +55,14 @@ export function StationRahmen({
   abschlussSatz: LineId;
   /** Wird aufgerufen, sobald ein Hinweis zu Ende vorgelesen ist. */
   onSatzGesprochen?: (satz: LineId) => void;
+  /**
+   * Die Station spricht selbst.
+   *
+   * Nötig, wo auf einen Tipp zwei Sätze folgen — eine Reaktion und der
+   * nächste Auftrag. Die müssen nacheinander kommen, und nur die Station
+   * kennt ihre Reihenfolge.
+   */
+  stummerRahmen?: boolean;
 }) {
   const gesprochen = useRef<LineId | null>(null);
   // Über eine Ref, damit ein neuer Rückruf den Satz nicht erneut auslöst.
@@ -64,7 +73,7 @@ export function StationRahmen({
 
   // Jeder neue Hinweis wird einmal vorgelesen.
   useEffect(() => {
-    if (!satz || fertig) return;
+    if (!satz || fertig || stummerRahmen) return;
     if (gesprochen.current === satz) return;
     gesprochen.current = satz;
     let abgebrochen = false;
@@ -74,7 +83,7 @@ export function StationRahmen({
     return () => {
       abgebrochen = true;
     };
-  }, [satz, fertig]);
+  }, [satz, fertig, stummerRahmen]);
 
   useEffect(() => () => voice.stopSpeaking(true), []);
 
