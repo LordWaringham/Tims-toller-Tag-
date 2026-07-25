@@ -7,6 +7,7 @@ import { STATIONS } from "@/lib/stations";
 import { zahl, type LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import * as voice from "@/lib/voice";
+import { neueSaat, streuIn } from "@/lib/streu";
 
 const STATION = STATIONS[8];
 
@@ -31,6 +32,14 @@ type Phase = "zaehlen" | "streicheln";
  * gelingt auch, wenn das Zielen noch nicht so klappt.
  */
 export function Schafe({ onGeschafft, onWeiter, onZurueck }: StationProps) {
+  // Nur die Aufstellung wechselt, nie die Anzahl.
+  const [saat] = useState(neueSaat);
+  const herde = SCHAFE.map((schaf, i) => ({
+    ...schaf,
+    x: schaf.x + streuIn(i, saat, -3, 3),
+    y: schaf.y + streuIn(i, saat + 1, -2.5, 2.5),
+  }));
+
   const [phase, setPhase] = useState<Phase>("zaehlen");
   const [gezaehlt, setGezaehlt] = useState<string[]>([]);
   const [gestreichelt, setGestreichelt] = useState<string[]>([]);
@@ -104,7 +113,7 @@ export function Schafe({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         aria-hidden
       />
 
-      {SCHAFE.map((schaf, i) => {
+      {herde.map((schaf, i) => {
         const nummer = gezaehlt.indexOf(schaf.id) + 1;
         const gezaehltJa = nummer > 0;
         const gestreicheltJa = gestreichelt.includes(schaf.id);

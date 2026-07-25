@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Ablage, Ziehbar } from "@/components/dnd";
@@ -8,6 +8,7 @@ import { STATIONS } from "@/lib/stations";
 import { zahl, type LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import * as voice from "@/lib/voice";
+import { mischen, neueSaat } from "@/lib/streu";
 
 const STATION = STATIONS[3];
 
@@ -39,6 +40,16 @@ const STEINE: Stein[] = [
  * Ein Kind, das gerade zählen lernt, soll stolz sein — nicht vorsichtig.
  */
 export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
+  // Jeder Turm bekommt eine andere Farbfolge — sechs Steine bleiben es immer.
+  const [saat] = useState(neueSaat);
+  const steine = useMemo(() => {
+    const farben = mischen(
+      STEINE.map((s) => ({ farbe: s.farbe, schatten: s.schatten })),
+      saat,
+    );
+    return STEINE.map((stein, i) => ({ ...stein, ...farben[i] }));
+  }, [saat]);
+
   const [gestapelt, setGestapelt] = useState<Stein[]>([]);
   const [fertig, setFertig] = useState(false);
   const [wackelt, setWackelt] = useState(false);
@@ -161,7 +172,7 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       </motion.div>
 
       {/* ------------------------------------------------------- Der Vorrat */}
-      {STEINE.filter((s) => !gestapeltIds.has(s.id)).map((stein, i) => (
+      {steine.filter((s) => !gestapeltIds.has(s.id)).map((stein, i) => (
         <Ziehbar
           key={stein.id}
           id={stein.id}

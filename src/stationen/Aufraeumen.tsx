@@ -8,6 +8,7 @@ import { STATIONS } from "@/lib/stations";
 import type { LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import * as voice from "@/lib/voice";
+import { neueSaat, streuIn } from "@/lib/streu";
 
 const STATION = STATIONS[4];
 
@@ -43,6 +44,14 @@ const KISTEN: { sorte: Sorte; farbe: string; rand: string; titel: string; x: num
  * „Hmm" statt einem Fehlerton.
  */
 export function Aufraeumen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
+  // Das Durcheinander liegt jedes Mal etwas anders — sortiert wird dasselbe.
+  const [saat] = useState(neueSaat);
+  const durcheinander = SPIELZEUG.map((s, i) => ({
+    ...s,
+    x: s.x + streuIn(i, saat, -5, 5),
+    y: s.y + streuIn(i, saat + 1, -4, 4),
+  }));
+
   const [weggeraeumt, setWeggeraeumt] = useState<Record<string, Sorte>>({});
   const [danebenGetippt, setDanebenGetippt] = useState(0);
   const [fertig, setFertig] = useState(false);
@@ -141,7 +150,7 @@ export function Aufraeumen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       })}
 
       {/* --------------------------------------------------- Das Durcheinander */}
-      {SPIELZEUG.filter((s) => !weggeraeumt[s.id]).map((spielzeug, i) => (
+      {durcheinander.filter((s) => !weggeraeumt[s.id]).map((spielzeug, i) => (
         <Ziehbar
           key={spielzeug.id}
           id={spielzeug.id}

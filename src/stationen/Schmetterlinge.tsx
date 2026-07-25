@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Ablage, Ziehbar } from "@/components/dnd";
 import { STATIONS } from "@/lib/stations";
 import type { LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
+import { mischen, neueSaat } from "@/lib/streu";
 
 const STATION = STATIONS[9];
 
@@ -36,6 +37,15 @@ const BLUMEN_ORDNUNG = ["blau", "orange", "lila", "rot", "gelb"];
  * zurück — freundlich, ohne Ton der Enttäuschung.
  */
 export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProps) {
+  /*
+   * Die Blumen stehen bei jedem Besuch in anderer Reihenfolge.
+   *
+   * Sonst merkt sich ein Kind nach ein paar Runden die Plätze statt der
+   * Farben — und übt dann Gedächtnis statt Farbzuordnung.
+   */
+  const [saat] = useState(neueSaat);
+  const blumenOrdnung = useMemo(() => mischen(BLUMEN_ORDNUNG, saat), [saat]);
+
   const [gelandet, setGelandet] = useState<string[]>([]);
   const [regelGesagt, setRegelGesagt] = useState(false);
   const [fertig, setFertig] = useState(false);
@@ -77,7 +87,7 @@ export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProp
       schleier={0.4}
     >
       {/* ------------------------------------------------------- Die Blumen */}
-      {BLUMEN_ORDNUNG.map((farbId, i) => {
+      {blumenOrdnung.map((farbId, i) => {
         const farbe = FARBEN.find((f) => f.id === farbId)!;
         const besetzt = gelandet.includes(farbId);
         return (
@@ -95,7 +105,7 @@ export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProp
               zIndex: 10,
             }}
           >
-            <div className="relative size-full">
+            <div className="relative size-full" aria-label={`Blume ${farbe.name}`}>
               <BlumeGrafik farbe={farbe} />
               {besetzt && (
                 <motion.div
@@ -126,6 +136,7 @@ export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProp
             breite={16}
           >
             <motion.div
+              aria-label={`Schmetterling ${farbe.name}`}
               animate={{ y: ["0cqw", "-1.8cqw", "0cqw"], rotate: [-4, 4, -4] }}
               transition={{
                 duration: 2.4 + i * 0.3,

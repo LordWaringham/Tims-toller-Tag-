@@ -245,20 +245,19 @@ await page.waitForTimeout(900);
 // -------------------------------------------------------- 10 Schmetterlinge
 console.log("→ 10 Schmetterlinge");
 await shot("24-schmetterlinge-start");
-const blumenX = { blau: 12, orange: 31, lila: 50, rot: 69, gelb: 88 };
-const falterX = { rot: 12, gelb: 31, blau: 50, lila: 69, orange: 88 };
+// Blumen und Falter stehen jetzt in wechselnder Reihenfolge — also über
+// ihre Namen suchen statt über feste Plätze.
 for (const farbe of ["rot", "gelb", "blau", "lila", "orange"]) {
-  const falter = page.locator('.buehne > .huelle');
-  const n = await falter.count();
-  let gefunden = null;
-  for (let k = 0; k < n; k++) {
-    const box = await falter.nth(k).boundingBox();
-    if (!box) continue;
-    const px = ((box.x + box.width / 2 - bbox.x) / bbox.width) * 100;
-    if (Math.abs(px - falterX[farbe]) < 4) { gefunden = falter.nth(k); break; }
+  const falter = page.locator(`[aria-label="Schmetterling ${farbe}"]`).first();
+  const blume = page.locator(`[aria-label="Blume ${farbe}"]`).first();
+  if (!(await falter.count()) || !(await blume.count())) {
+    fehler.push(`Schmetterlinge: ${farbe} nicht gefunden`);
+    continue;
   }
-  if (!gefunden) { fehler.push(`Schmetterlinge: ${farbe} nicht gefunden`); continue; }
-  await ziehenNachPunkt(gefunden, blumenX[farbe], 74);
+  const zb = await blume.boundingBox();
+  const zielX = ((zb.x + zb.width / 2 - bbox.x) / bbox.width) * 100;
+  const zielY = ((zb.y + zb.height / 2 - bbox.y) / bbox.height) * 100;
+  await ziehenNachPunkt(falter, zielX, zielY);
   await page.waitForTimeout(400);
 }
 await page.waitForTimeout(1500);
