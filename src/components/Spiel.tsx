@@ -47,8 +47,7 @@ type Ansicht = "titel" | "wer" | "karte" | "station" | "sticker" | "eltern" | "f
 export function Spiel() {
   const [kindId, setKindId] = useState<string | null>(null);
   const kind = kindFinden(kindId);
-  const { abschliessen, zuruecksetzen, istOffen, istFertig, naechsteOffene, anzahlFertig } =
-    useProgress(kindId);
+  const { abschliessen, istOffen, istFertig, naechsteOffene } = useProgress(kindId);
   const hatJemandGespielt = useHatJemandGespielt();
   const [ansicht, setAnsicht] = useState<Ansicht>("titel");
   const [aktuell, setAktuell] = useState<StationId | null>(null);
@@ -142,11 +141,7 @@ export function Spiel() {
           )}
 
           {ansicht === "eltern" && (
-            <Elternseite
-              anzahlFertig={anzahlFertig}
-              onZuruecksetzen={zuruecksetzen}
-              onZurueck={() => setAnsicht("titel")}
-            />
+            <Elternseite onZurueck={() => setAnsicht("titel")} />
           )}
 
           {ansicht === "finale" && (

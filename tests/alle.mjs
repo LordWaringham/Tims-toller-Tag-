@@ -18,6 +18,7 @@ const TESTS = [
   ["Offline-Betrieb", "offline.mjs"],
   ["Aufnahmestudio", "aufnahmestudio.mjs"],
   ["Drei Spielstände", "kinder.mjs"],
+  ["Elternseite", "elternseite.mjs"],
 ];
 
 function laufen(befehl, argumente, optionen = {}) {

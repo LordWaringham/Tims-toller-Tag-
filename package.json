@@ -16,7 +16,8 @@
     "test:ton": "node tests/ton-ueberlappung.mjs",
     "test:offline": "node tests/offline.mjs",
     "test:aufnahme": "node tests/aufnahmestudio.mjs",
-    "test:kinder": "node tests/kinder.mjs"
+    "test:kinder": "node tests/kinder.mjs",
+    "test:eltern": "node tests/elternseite.mjs"
   },
   "dependencies": {
     "motion": "^12.42.2",

@@ -168,6 +168,7 @@ export function useAlleStaende() {
   return {
     schluesselWert,
     staende: KINDER.map((k) => ({ kind: k, anzahl: stand(k.id).fertig.length })),
+    einzelnZuruecksetzen: (kindId: string) => schreiben(kindId, LEER),
     allesZuruecksetzen: () => KINDER.forEach((k) => schreiben(k.id, LEER)),
   };
 }

@@ -2,18 +2,14 @@
 
 import { useState } from "react";
 import { STATIONS } from "@/lib/stations";
+import { useAlleStaende } from "@/lib/progress";
 
 /** Kurze Erklärseite für Eltern — bewusst schlicht und ohne Spielreize. */
-export function Elternseite({
-  onZurueck,
-  onZuruecksetzen,
-  anzahlFertig,
-}: {
-  onZurueck: () => void;
-  onZuruecksetzen: () => void;
-  anzahlFertig: number;
-}) {
+export function Elternseite({ onZurueck }: { onZurueck: () => void }) {
   const [sicher, setSicher] = useState(false);
+  // Die Seite wird vom Titelbild aus geöffnet, also bevor ein Kind gewählt ist.
+  // Sie zeigt deshalb alle drei Stände statt eines einzelnen.
+  const { staende, einzelnZuruecksetzen, allesZuruecksetzen } = useAlleStaende();
 
   return (
     <div className="min-h-dvh w-full bg-creme px-5 py-8">
@@ -65,20 +61,43 @@ export function Elternseite({
           <h2 className="mb-2 text-base font-semibold" style={{ color: "#54604f" }}>
             Fortschritt
           </h2>
-          <p className="mb-3 text-sm">
-            {anzahlFertig} von {STATIONS.length} Stationen geschafft.
-          </p>
+          <ul className="mb-4 space-y-2">
+            {staende.map(({ kind, anzahl }) => (
+              <li key={kind.id} className="flex items-center gap-3 text-sm">
+                <span
+                  className="grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold text-white"
+                  style={{ background: kind.farbe }}
+                >
+                  {kind.name[0]}
+                </span>
+                <span className="w-16 font-medium">{kind.name}</span>
+                <span className="flex-1 opacity-75">
+                  {anzahl} von {STATIONS.length} Stationen
+                </span>
+                {anzahl > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => einzelnZuruecksetzen(kind.id)}
+                    className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium"
+                    style={{ color: "#8b978a" }}
+                  >
+                    zurücksetzen
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
           {sicher ? (
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => {
-                  onZuruecksetzen();
+                  allesZuruecksetzen();
                   setSicher(false);
                 }}
                 className="rounded-full bg-[#d9541c] px-5 py-2 text-sm font-semibold text-white"
               >
-                Ja, alles zurücksetzen
+                Ja, bei allen dreien
               </button>
               <button
                 type="button"
@@ -96,7 +115,7 @@ export function Elternseite({
               className="rounded-full bg-black/5 px-5 py-2 text-sm font-semibold"
               style={{ color: "#5f6b5c" }}
             >
-              Von vorne beginnen
+              Bei allen dreien von vorne beginnen
             </button>
           )}
         </section>

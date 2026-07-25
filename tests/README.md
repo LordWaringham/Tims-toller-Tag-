@@ -18,6 +18,7 @@ npm run test:ton         # spielt das Spiel zwei Sätze gleichzeitig ab?
 npm run test:offline     # läuft alles ohne Netz, samt Sprachaufnahmen?
 npm run test:aufnahme    # Aufnahmestudio bis zum fertigen ZIP
 npm run test:kinder      # bleiben die drei Spielstände getrennt?
+npm run test:eltern      # zeigt und löscht die Elternseite die richtigen Stände?
 ```
 
 Screenshots landen in `tests/bilder/` und sind nicht eingecheckt. Sie lohnen
@@ -35,6 +36,7 @@ Fast alle Fehler in diesem Projekt waren nur im Browser zu finden:
 - Zwei Sätze starteten in derselben Millisekunde, weil beide auf dasselbe
   Laden warteten.
 - Ohne Netz fehlten sämtliche Sprachaufnahmen.
+- Das Zurücksetzen auf der Elternseite tat nichts, sah aber aus wie Erfolg.
 
 Kein einziger davon wäre einem Einheitstest aufgefallen. `test:ton` zählt
 deshalb mit, wie viele Audioelemente gleichzeitig laufen, und `test:offline`
