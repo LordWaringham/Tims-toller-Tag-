@@ -50,10 +50,22 @@ function Konfetti() {
  * Der Moment nach einer geschafften Station: Konfetti, ein Sticker
  * und ein großer Weiter-Knopf. Kein Punktestand, keine Wertung.
  */
+/**
+ * Sicherheitsnetz für den Weiter-Knopf.
+ *
+ * Der Knopf wartet auf das Ende der Stimme. Bleibt die einmal hängen — ein
+ * Versprechen, das nie erfüllt wird, weil der Browser die Aufnahme anhält —
+ * säße das Kind vor einem Bildschirm ohne Ausweg. Nach dieser Zeit kommt der
+ * Knopf auf jeden Fall. Drei Sätze dauern zusammen selten mehr als zehn
+ * Sekunden.
+ */
+const NOTAUSGANG_MS = 15000;
+
 export function Jubel({
   sichtbar,
   sticker,
   abschlussSatz,
+  stickerSatz,
   onWeiter,
   weiterText = "Weiter",
   dunkel = false,
@@ -62,6 +74,8 @@ export function Jubel({
   sticker: string;
   /** Der Satz aus dem Buch, der die Station abschließt. */
   abschlussSatz: LineId;
+  /** „Dafür bekommst du einen …-Sticker." — je Station ein eigener. */
+  stickerSatz: LineId;
   onWeiter: () => void;
   weiterText?: string;
   dunkel?: boolean;
@@ -72,27 +86,53 @@ export function Jubel({
   );
 
   /*
-   * Erst das Lob, dann der Satz aus dem Buch.
+   * Der Weiter-Knopf kommt erst, wenn die Stimme fertig ist.
+   *
+   * Vorher stand er von Anfang an da, und wer ihn drückte, schnitt dem
+   * Sprecher mitten im Satz das Wort ab — gerade Kinder tippen auf alles,
+   * was groß und orange ist. Jetzt ploppt er auf, wenn zugehört wurde.
+   */
+  const [stimmeFertig, setStimmeFertig] = useState(false);
+
+  /*
+   * Erst das Lob, dann der Satz aus dem Buch, dann der Sticker.
    *
    * Genau so steht es auch auf dem Bild: „Klasse!" groß, darunter „Aufstehen,
    * Teddy — der Tag beginnt." Andersherum hörte man den Abschlusssatz zu einem
    * Bild, das schon längst das Lob zeigte.
    */
   useEffect(() => {
+    // Kein Zurücksetzen nötig: Eine Station wird nie wieder unfertig, und wer
+    // sie erneut spielt, bekommt einen frisch gebauten Jubel.
     if (!sichtbar) return;
     sfx.fanfare();
     let abgebrochen = false;
+    const fertig = () => {
+      if (!abgebrochen) setStimmeFertig(true);
+    };
+    const notausgang = setTimeout(fertig, NOTAUSGANG_MS);
+    /*
+     * Wird mitten im Jubel stummgeschaltet, endet kein Satz mehr — die
+     * angehaltene Aufnahme löst ihr Versprechen nie ein. Dann gibt es auch
+     * nichts mehr zu Ende zu hören, und der Knopf darf sofort kommen.
+     */
+    const abmelden = voice.subscribeMuted(() => {
+      if (voice.isMuted()) fertig();
+    });
     (async () => {
       await voice.speak(lob);
       if (abgebrochen) return;
       await voice.speak(abschlussSatz);
       if (abgebrochen) return;
-      await voice.speak("sticker");
+      await voice.speakLieber(stickerSatz, "sticker");
+      fertig();
     })();
     return () => {
       abgebrochen = true;
+      clearTimeout(notausgang);
+      abmelden();
     };
-  }, [sichtbar, abschlussSatz, lob]);
+  }, [sichtbar, abschlussSatz, stickerSatz, lob]);
 
   return (
     <AnimatePresence>
@@ -140,15 +180,29 @@ export function Jubel({
               {LINES[abschlussSatz]}
             </p>
 
-            <motion.button
-              type="button"
-              onClick={onWeiter}
-              whileTap={{ scale: 0.94 }}
-              className="mt-[1cqw] rounded-full px-[7cqw] py-[2.4cqw] text-[4cqw] font-semibold text-white shadow-lg"
-              style={{ background: "linear-gradient(180deg, #f0813c, #de5a22)" }}
-            >
-              {weiterText}
-            </motion.button>
+            {/*
+              Der Platz ist von Anfang an reserviert: Sonst rutschte das ganze
+              Bild nach oben, sobald der Knopf erscheint.
+            */}
+            <div className="mt-[1cqw] grid h-[11cqw] place-items-center">
+              <AnimatePresence>
+                {stimmeFertig && (
+                  <motion.button
+                    type="button"
+                    onClick={onWeiter}
+                    whileTap={{ scale: 0.94 }}
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 16 }}
+                    className="rounded-full px-[7cqw] py-[2.4cqw] text-[4cqw] font-semibold text-white shadow-lg"
+                    style={{ background: "linear-gradient(180deg, #f0813c, #de5a22)" }}
+                  >
+                    {weiterText}
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.div>
         </motion.div>
       )}

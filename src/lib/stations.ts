@@ -26,6 +26,8 @@ export interface Station {
   intro: LineId;
   /** Der Satz aus dem Buch, mit dem die Station endet. */
   abschluss: LineId;
+  /** „Dafür bekommst du einen …-Sticker." */
+  stickerSatz: LineId;
   /** Himmelsfarben für diese Tageszeit (oben, unten). */
   himmel: [string, string];
 }
@@ -39,6 +41,7 @@ export const STATIONS: Station[] = [
     lernziel: "Ursache und Wirkung",
     intro: "s01-intro",
     abschluss: "s01-fertig",
+    stickerSatz: "sticker-aufwachen",
     himmel: ["#2b3f6b", "#f0a868"],
   },
   {
@@ -49,6 +52,7 @@ export const STATIONS: Station[] = [
     lernziel: "Zuordnen und Farben",
     intro: "s02-intro",
     abschluss: "s02-fertig",
+    stickerSatz: "sticker-anziehen",
     himmel: ["#7fa8d8", "#ffd9a0"],
   },
   {
@@ -59,6 +63,7 @@ export const STATIONS: Station[] = [
     lernziel: "Zählen bis 5",
     intro: "s03-intro",
     abschluss: "s03-fertig",
+    stickerSatz: "sticker-fruehstueck",
     himmel: ["#8fbce8", "#ffe6b8"],
   },
   {
@@ -69,6 +74,7 @@ export const STATIONS: Station[] = [
     lernziel: "Zählen und Feinmotorik",
     intro: "s04-intro",
     abschluss: "s04-fertig",
+    stickerSatz: "sticker-turm",
     himmel: ["#9ccbec", "#ffeecb"],
   },
   {
@@ -79,6 +85,7 @@ export const STATIONS: Station[] = [
     lernziel: "Sortieren nach Kategorien",
     intro: "s05-intro",
     abschluss: "s05-fertig",
+    stickerSatz: "sticker-aufraeumen",
     himmel: ["#a8d4f0", "#fff2d8"],
   },
   {
@@ -89,6 +96,7 @@ export const STATIONS: Station[] = [
     lernziel: "Geduld und Ausdauer",
     intro: "s06-intro",
     abschluss: "s06-fertig",
+    stickerSatz: "sticker-blumen",
     himmel: ["#a8d4f0", "#ffeed0"],
   },
   {
@@ -99,6 +107,7 @@ export const STATIONS: Station[] = [
     lernziel: "Reihenfolge und Formen",
     intro: "s07-intro",
     abschluss: "s07-fertig",
+    stickerSatz: "sticker-kekse",
     himmel: ["#9fcbe8", "#ffe3bc"],
   },
   {
@@ -109,6 +118,7 @@ export const STATIONS: Station[] = [
     lernziel: "Rhythmus und Timing",
     intro: "s08-intro",
     abschluss: "s08-fertig",
+    stickerSatz: "sticker-pfuetzen",
     himmel: ["#8296a8", "#c8d4dc"],
   },
   {
@@ -119,6 +129,7 @@ export const STATIONS: Station[] = [
     lernziel: "Zählen bis 10",
     intro: "s09-intro",
     abschluss: "s09-fertig",
+    stickerSatz: "sticker-schafe",
     himmel: ["#8fc0e0", "#ffe0b0"],
   },
   {
@@ -129,6 +140,7 @@ export const STATIONS: Station[] = [
     lernziel: "Farben zuordnen",
     intro: "s10-intro",
     abschluss: "s10-fertig",
+    stickerSatz: "sticker-schmetterlinge",
     himmel: ["#f0b070", "#ffd8a0"],
   },
   {
@@ -139,6 +151,7 @@ export const STATIONS: Station[] = [
     lernziel: "Zur Ruhe kommen",
     intro: "s11-intro",
     abschluss: "s11-fertig",
+    stickerSatz: "sticker-gutenacht",
     himmel: ["#141c38", "#3c4a78"],
   },
 ];

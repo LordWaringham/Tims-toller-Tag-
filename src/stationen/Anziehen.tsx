@@ -44,6 +44,8 @@ export function Anziehen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
 
   const anlegen = (stueck: Kleidungsstueck, zone: string | null) => {
     if (zone !== stueck.art) return false;
+    // Die Hose kommt erst dran, wenn oben etwas sitzt.
+    if (stueck.art === "hose" && !oberteil) return false;
 
     sfx.place();
     const neuesOberteil = stueck.art === "oberteil" ? stueck : oberteil;
@@ -115,10 +117,21 @@ export function Anziehen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           zIndex: 5,
         }}
       />
+      {/*
+        Erst das Oberteil, dann die Hose.
+
+        Die Hosenfläche nahm vorher von Anfang an Hosen an — auch während oben
+        noch „Zieh Tim zuerst ein Oberteil an" stand. Eine Hose, die man Tim
+        beim Oberteil-Auftrag hinzog, blieb an ihm kleben. Jetzt nimmt immer
+        nur die Fläche an, die gerade dran ist; alles andere hüpft freundlich
+        zurück.
+      */}
       <Ablage
         id="hose"
         toleranzCqw={6}
-        akzeptiert={(id) => KLEIDUNG.find((k) => k.id === id)?.art === "hose"}
+        akzeptiert={(id) =>
+          Boolean(oberteil) && KLEIDUNG.find((k) => k.id === id)?.art === "hose"
+        }
         style={{
           position: "absolute",
           left: "50%",

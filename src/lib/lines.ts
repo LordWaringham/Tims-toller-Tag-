@@ -18,6 +18,25 @@ export const LINES = {
   "lob-4": "Wunderbar!",
   "lob-5": "Klasse!",
   sticker: "Dafür bekommst du einen Sticker.",
+
+  /*
+   * Für jede Station ein eigener Sticker-Satz.
+   *
+   * „Dafür bekommst du einen Sticker" sagt nicht, welchen. Diese elf benennen
+   * ihn. Solange einer nicht eingesprochen ist, springt der allgemeine Satz
+   * oben ein — es bleibt also nie still.
+   */
+  "sticker-aufwachen": "Dafür bekommst du einen Sonnen-Sticker.",
+  "sticker-anziehen": "Dafür bekommst du einen T-Shirt-Sticker.",
+  "sticker-fruehstueck": "Dafür bekommst du einen Erdbeer-Sticker.",
+  "sticker-turm": "Dafür bekommst du einen Bausteine-Sticker.",
+  "sticker-aufraeumen": "Dafür bekommst du einen Teddy-Sticker.",
+  "sticker-blumen": "Dafür bekommst du einen Blumen-Sticker.",
+  "sticker-kekse": "Dafür bekommst du einen Keks-Sticker.",
+  "sticker-pfuetzen": "Dafür bekommst du einen Gummistiefel-Sticker.",
+  "sticker-schafe": "Dafür bekommst du einen Schaf-Sticker.",
+  "sticker-schmetterlinge": "Dafür bekommst du einen Schmetterlings-Sticker.",
+  "sticker-gutenacht": "Dafür bekommst du einen Sternen-Sticker.",
   gesperrt: "Das kommt gleich. Wir machen alles der Reihe nach.",
   finale: "Das war ein toller Tag. Bis morgen!",
   // Diese vier bleiben still, solange keine Aufnahme dafür vorliegt —
@@ -128,7 +147,7 @@ export const LINES = {
   "s11-erklaerung": "Tippe die Sterne an.",
   "s11-baer": "Schau, ein kleiner Bär aus Sternen!",
   "s11-decke": "Zieh Tim die Decke hoch.",
-  "s11-fertig": "Gute Nacht, kleiner Teddy. Das war ein toller Tag. Bis morgen!",
+  "s11-fertig": "Gute Nacht, lieber Tim. Das war ein toller Tag. Bis morgen!",
 } as const;
 
 export type LineId = keyof typeof LINES;

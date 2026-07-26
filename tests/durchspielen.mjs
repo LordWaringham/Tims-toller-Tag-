@@ -35,9 +35,14 @@ const mitte = async (loc) => {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 
+/*
+ * Der Weiter-Knopf erscheint erst, wenn Lob, Abschlusssatz und Stickersatz
+ * gesprochen sind — deshalb hier großzügig warten. Das Sicherheitsnetz im
+ * Jubel bringt ihn spätestens nach 15 Sekunden.
+ */
 const jubelWeg = async (station) => {
   const weiter = page.getByRole("button", { name: /Weiter|toller Tag/ });
-  await weiter.waitFor({ state: "visible", timeout: 8000 }).catch(() => {
+  await weiter.waitFor({ state: "visible", timeout: 20000 }).catch(() => {
     fehler.push(`${station}: kein Weiter-Knopf erschienen`);
   });
 };

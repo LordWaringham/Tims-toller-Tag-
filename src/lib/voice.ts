@@ -213,6 +213,29 @@ export async function speakWennAufgenommen(id: string): Promise<void> {
   return playRecording(datei);
 }
 
+/**
+ * Nimmt den genaueren Satz, wenn es dafür eine Aufnahme gibt.
+ *
+ * Für „Dafür bekommst du einen Keks-Sticker" gibt es elf Fassungen, eine je
+ * Station. Fehlt eine davon noch, wird der allgemeine Satz gesprochen — mit
+ * der Gerätestimme klänge der genauere Satz sonst wie ein Fremdkörper mitten
+ * in den eingesprochenen.
+ */
+export async function speakLieber(genauer: LineId, sonst: LineId): Promise<void> {
+  if (muted) return;
+  const meine = ++anforderung;
+  const m = await loadManifest();
+  if (muted || meine !== anforderung) return;
+  const datei = m[genauer];
+  if (!datei) {
+    // Der allgemeine Satz zieht seine eigene Nummer — deshalb hier zurücktreten.
+    anforderung--;
+    return speak(sonst);
+  }
+  stopSpeaking();
+  return playRecording(datei);
+}
+
 /** Sätze nacheinander, mit kleiner Pause dazwischen. */
 export async function speakSequence(ids: LineId[], gapMs = 250): Promise<void> {
   for (const id of ids) {

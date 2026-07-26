@@ -73,8 +73,24 @@ await page.getByRole("button", { name: "Teddy" }).click({ force: true });
 await page.waitForTimeout(3000);
 console.log("→ Tim antippen");
 await page.getByRole("button", { name: "Tim", exact: true }).click({ force: true });
-// Lang genug, dass der Jubel Lob und Abschlusssatz beide anfängt.
-await page.waitForTimeout(9000);
+
+/*
+ * Solange der Sprecher redet, gibt es keinen Weiter-Knopf.
+ *
+ * Vorher stand er von Anfang an da. Ein Kind tippt auf alles, was groß und
+ * orange ist — und schnitt sich damit selbst das Lob ab. Dieser Test ist der
+ * einzige, in dem der Ton wirklich läuft; nur hier ist das zu prüfen.
+ */
+const weiter = page.getByRole("button", { name: /^Weiter$/ });
+// Zwei Sekunden Erfolgspause, dann das Lob — hier läuft es noch.
+await page.waitForTimeout(3500);
+const zuFrueh = await weiter.count();
+console.log(`Weiter-Knopf während des Lobs: ${zuFrueh ? "da" : "noch nicht"}`);
+
+await weiter
+  .waitFor({ state: "visible", timeout: 20000 })
+  .catch(() => console.log("Weiter-Knopf kam gar nicht"));
+const spaeterDa = await weiter.count();
 
 const ton = await page.evaluate(() => window.__ton);
 const t0 = ton.ereignisse.length ? ton.ereignisse[0].t : 0;
@@ -86,6 +102,8 @@ for (const e of ton.ereignisse) {
 const fehler = [];
 console.log(`\nHöchste Zahl gleichzeitig laufender Audios: ${ton.maxGleichzeitig}`);
 if (ton.maxGleichzeitig > 1) fehler.push(`${ton.maxGleichzeitig} Audios gleichzeitig`);
+if (zuFrueh) fehler.push("Weiter-Knopf war schon da, während der Sprecher redete");
+if (!spaeterDa) fehler.push("Weiter-Knopf kam auch nach dem Sprechen nicht");
 
 /*
  * Im Jubel gehört das Lob nach vorn.

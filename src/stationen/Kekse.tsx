@@ -26,6 +26,20 @@ const FORMEN: { form: Form; y: number }[] = [
   { form: "kreis", y: 80 },
 ];
 
+/**
+ * Die Umrisse der drei Förmchen — eine Quelle für beides.
+ *
+ * Gebraucht werden sie zweimal: als Förmchen zum Ziehen und als Abdruck, der
+ * im Teig zurückbleibt. Aus derselben Quelle, damit ein Sternförmchen auch ein
+ * sternförmiges Loch hinterlässt und beides sich nicht auseinanderentwickelt.
+ * Alle liegen in einem Feld von 0 bis 100 um die Mitte (50, 50).
+ */
+const FORM_PFAD: Record<Form, string> = {
+  stern: "M50 8 L61 38 L94 38 L67 57 L77 88 L50 69 L23 88 L33 57 L6 38 L39 38z",
+  herz: "M50 88 C10 60 12 22 34 18 C44 16 50 26 50 32 C50 26 56 16 66 18 C88 22 90 60 50 88z",
+  kreis: "M50 10 a40 40 0 1 0 0.1 0z",
+};
+
 const RUEHR_ZIEL = Math.PI * 2 * 3; // drei volle Umdrehungen
 const KEKS_ZIEL = 5;
 
@@ -187,7 +201,7 @@ export function Kekse({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             toleranzCqw={7}
             style={{ width: "100%", height: "100%", position: "relative" }}
           >
-            <TeigFlaeche farbe={teigFarbe} loecher={kekse.length} />
+            <TeigFlaeche farbe={teigFarbe} loecher={kekse.map((k) => k.form)} />
           </Ablage>
         ) : phase === "zutaten" ? (
           // In der Zutatenphase ist die Schüssel das Ziel zum Hineinziehen.
@@ -387,7 +401,14 @@ function Schuessel({ farbe, fuellstand }: { farbe: string; fuellstand: number })
   );
 }
 
-function TeigFlaeche({ farbe, loecher }: { farbe: string; loecher: number }) {
+/**
+ * Der Teig mit den ausgestochenen Stellen.
+ *
+ * Der Abdruck hat die Form des Keksförmchens, das dort eingestochen wurde —
+ * ein rundes Loch nach einem Stern sieht falsch aus, und ein Kind, das gerade
+ * Formen lernt, merkt genau das.
+ */
+function TeigFlaeche({ farbe, loecher }: { farbe: string; loecher: Form[] }) {
   return (
     <svg viewBox="0 0 100 100" className="size-full drop-shadow-lg" aria-hidden>
       <path
@@ -396,17 +417,17 @@ function TeigFlaeche({ farbe, loecher }: { farbe: string; loecher: number }) {
         stroke="rgba(150,110,60,0.5)"
         strokeWidth="2.5"
       />
-      {/* Ausgestochene Stellen */}
-      {Array.from({ length: loecher }, (_, i) => {
+      {/* Ausgestochene Stellen — in der Form des jeweiligen Förmchens */}
+      {loecher.map((form, i) => {
         const winkel = (i / 5) * Math.PI * 2 - Math.PI / 2;
+        // Der Pfad ist 100 breit; auf 22 verkleinert und um die Mitte gelegt.
+        const skala = 0.22;
+        const x = 50 + Math.cos(winkel) * 24 - 50 * skala;
+        const y = 50 + Math.sin(winkel) * 24 - 50 * skala;
         return (
-          <circle
-            key={i}
-            cx={50 + Math.cos(winkel) * 24}
-            cy={50 + Math.sin(winkel) * 24}
-            r="10"
-            fill="rgba(120,90,50,0.22)"
-          />
+          <g key={i} transform={`translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${skala})`}>
+            <path d={FORM_PFAD[form]} fill="rgba(120,90,50,0.26)" />
+          </g>
         );
       })}
       {[
@@ -473,12 +494,7 @@ function FormGrafik({ form, ausstecher = false }: { form: Form; ausstecher?: boo
   const strich = ausstecher ? "#5c7180" : "#a9743a";
   const breite = ausstecher ? 9 : 3;
 
-  const pfad =
-    form === "stern"
-      ? "M50 8 L61 38 L94 38 L67 57 L77 88 L50 69 L23 88 L33 57 L6 38 L39 38z"
-      : form === "herz"
-        ? "M50 88 C10 60 12 22 34 18 C44 16 50 26 50 32 C50 26 56 16 66 18 C88 22 90 60 50 88z"
-        : "M50 10 a40 40 0 1 0 0.1 0z";
+  const pfad = FORM_PFAD[form];
 
   return (
     <svg viewBox="0 0 100 100" className="w-full drop-shadow-md" aria-hidden>

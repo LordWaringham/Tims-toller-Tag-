@@ -13,7 +13,7 @@ und heißt genau wie die ID — also `s03-erdbeeren.mp3` für die ID `s03-erdbee
 Es müssen nicht alle Sätze sein. Für jeden Satz ohne Aufnahme springt die deutsche
 Stimme des Geräts ein, also kann man jederzeit ein paar Sätze nachreichen.
 
-Insgesamt: **82 Sätze**.
+Insgesamt: **93 Sätze**.
 
 ## Allgemein
 
@@ -27,6 +27,17 @@ Insgesamt: **82 Sätze**.
 | `lob-4.mp3` | Wunderbar! |
 | `lob-5.mp3` | Klasse! |
 | `sticker.mp3` | Dafür bekommst du einen Sticker. |
+| `sticker-aufwachen.mp3` | Dafür bekommst du einen Sonnen-Sticker. |
+| `sticker-anziehen.mp3` | Dafür bekommst du einen T-Shirt-Sticker. |
+| `sticker-fruehstueck.mp3` | Dafür bekommst du einen Erdbeer-Sticker. |
+| `sticker-turm.mp3` | Dafür bekommst du einen Bausteine-Sticker. |
+| `sticker-aufraeumen.mp3` | Dafür bekommst du einen Teddy-Sticker. |
+| `sticker-blumen.mp3` | Dafür bekommst du einen Blumen-Sticker. |
+| `sticker-kekse.mp3` | Dafür bekommst du einen Keks-Sticker. |
+| `sticker-pfuetzen.mp3` | Dafür bekommst du einen Gummistiefel-Sticker. |
+| `sticker-schafe.mp3` | Dafür bekommst du einen Schaf-Sticker. |
+| `sticker-schmetterlinge.mp3` | Dafür bekommst du einen Schmetterlings-Sticker. |
+| `sticker-gutenacht.mp3` | Dafür bekommst du einen Sternen-Sticker. |
 | `gesperrt.mp3` | Das kommt gleich. Wir machen alles der Reihe nach. |
 | `finale.mp3` | Das war ein toller Tag. Bis morgen! |
 | `hallo-luise.mp3` | Hallo Luise! Schön, dass du da bist. |
@@ -160,4 +171,4 @@ Insgesamt: **82 Sätze**.
 | `s11-erklaerung.mp3` | Tippe die Sterne an. |
 | `s11-baer.mp3` | Schau, ein kleiner Bär aus Sternen! |
 | `s11-decke.mp3` | Zieh Tim die Decke hoch. |
-| `s11-fertig.mp3` | Gute Nacht, kleiner Teddy. Das war ein toller Tag. Bis morgen! |
+| `s11-fertig.mp3` | Gute Nacht, lieber Tim. Das war ein toller Tag. Bis morgen! |

@@ -150,6 +150,7 @@ export function StationRahmen({
         sichtbar={fertig}
         sticker={station.sticker}
         abschlussSatz={abschlussSatz}
+        stickerSatz={station.stickerSatz}
         onWeiter={onWeiter}
         weiterText={weiterText}
         dunkel={dunkel}

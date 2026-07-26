@@ -61,11 +61,17 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
     if (zone !== "schuessel") return false;
 
     if (art !== aktuell.art) {
-      // Kein Fehler — die Frucht landet trotzdem in der Schüssel, sie zählt nur nicht mit.
+      /*
+       * In die Schüssel kommt nur, was gerade gefragt ist.
+       *
+       * Vorher landete auch die falsche Frucht darin — sie zählte nur nicht
+       * mit. Damit lag am Ende Obst in der Schüssel, das niemand bestellt
+       * hatte, und die Aufgabe „drei Erdbeeren" war nicht mehr abzulesen.
+       * Jetzt hüpft sie freundlich zurück: kein Fehlerton, kein Rot, nur ein
+       * „das war es noch nicht".
+       */
       setDanebenGetippt((n) => n + 1);
-      sfx.nope();
-      setSchuessel((alt) => [...alt, neueFrucht(art, naechsterKey.current++)]);
-      return true;
+      return false;
     }
 
     const neu = gezaehlt + 1;

@@ -47,7 +47,8 @@ for (const ziel of ["Sonne", "Teddy", "Tim"]) {
 }
 await page
   .getByRole("button", { name: /^Weiter$/ })
-  .waitFor({ timeout: 12000 })
+  // Der Knopf kommt erst, wenn die drei Jubelsätze gesprochen sind.
+  .waitFor({ timeout: 20000 })
   .catch(() => fehler.push("Luise konnte Station 1 nicht abschließen"));
 console.log("Luise hat Station 1 geschafft");
 
