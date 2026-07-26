@@ -116,7 +116,7 @@ Insgesamt: **82 Sätze**.
 | Dateiname | Text |
 | --- | --- |
 | `s07-intro.mp3` | In der Küche hilft Tim seiner Mama beim Backen. |
-| `s07-zutaten.mp3` | Erst die Zutaten in die Schüssel. Tippe auf Mehl, Ei und Zucker. |
+| `s07-zutaten.mp3` | Erst die Zutaten in die Schüssel. Zieh Mehl, Ei und Zucker hinein. |
 | `s07-ruehren.mp3` | Jetzt wird gerührt! Dreh den Löffel im Kreis. |
 | `s07-ausstechen.mp3` | Und jetzt Kekse ausstechen. Zieh die Förmchen auf den Teig. |
 | `s07-fertig.mp3` | Die Kekse sind fertig! Die ganze Familie freut sich. |

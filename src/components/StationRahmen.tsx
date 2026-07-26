@@ -35,6 +35,7 @@ export function StationRahmen({
   unschaerfe = 0,
   helligkeit = 1,
   hintergrund,
+  zeiger,
   dunkel = false,
   weiterText,
   abschlussSatz,
@@ -52,6 +53,8 @@ export function StationRahmen({
   unschaerfe?: number;
   helligkeit?: number;
   hintergrund?: string;
+  /** Eigener Mauszeiger für diese Station. */
+  zeiger?: string;
   dunkel?: boolean;
   weiterText?: string;
   abschlussSatz: LineId;
@@ -113,6 +116,7 @@ export function StationRahmen({
       unschaerfe={unschaerfe}
       helligkeit={helligkeit}
       hintergrund={hintergrund}
+      zeiger={zeiger}
     >
       <Sprechblase id={fertig || geradeGeschafft ? null : satz} dunkel={dunkel} />
 

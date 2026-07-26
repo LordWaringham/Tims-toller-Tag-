@@ -156,3 +156,42 @@ export async function randPruefen(page, wo, toleranz = 4) {
   );
   return raus.map((m) => `${wo}: ${m}`);
 }
+
+/**
+ * Verschwindet etwas Antippbares hinter der Stickerleiste?
+ *
+ * Die Leiste liegt über der Bühne und nimmt keine Tipps an — was darunter
+ * liegt, bleibt also bedienbar, ist aber nicht mehr zu sehen. Genau so
+ * verschwand eine Pfütze zur Hälfte, und beim Backen lag das Blech darunter.
+ */
+export async function leistePruefen(page, wo, ueberdeckung = 0.25) {
+  const leiste = await page.locator(".buehne [aria-hidden] >> nth=-1").boundingBox().catch(() => null);
+  const streifen = await page.evaluate(() => {
+    const kandidat = [...document.querySelectorAll(".buehne div")].find(
+      (el) => getComputedStyle(el).zIndex === "60",
+    );
+    if (!kandidat) return null;
+    const r = kandidat.getBoundingClientRect();
+    return { x: r.x, y: r.y, width: r.width, height: r.height };
+  });
+  if (!streifen || !streifen.height) return [];
+  void leiste;
+  const treffer = await page.locator(".buehne button:not([disabled])").evaluateAll(
+    (els, [s, anteil]) =>
+      els
+        .map((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width < 2 || r.height < 2) return null;
+          const breite = Math.min(r.right, s.x + s.width) - Math.max(r.left, s.x);
+          const hoehe = Math.min(r.bottom, s.y + s.height) - Math.max(r.top, s.y);
+          if (breite <= 0 || hoehe <= 0) return null;
+          const verdeckt = (breite * hoehe) / (r.width * r.height);
+          if (verdeckt < anteil) return null;
+          const name = el.getAttribute("aria-label") ?? el.textContent?.trim()?.slice(0, 20) ?? "?";
+          return `${name} liegt zu ${Math.round(verdeckt * 100)}% hinter der Stickerleiste`;
+        })
+        .filter(Boolean),
+    [streifen, ueberdeckung],
+  );
+  return treffer.map((m) => `${wo}: ${m}`);
+}

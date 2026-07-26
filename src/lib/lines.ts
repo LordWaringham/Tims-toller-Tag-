@@ -96,7 +96,7 @@ export const LINES = {
 
   // ---------------------------------------------------------- 7 · Kekse backen
   "s07-intro": "In der Küche hilft Tim seiner Mama beim Backen.",
-  "s07-zutaten": "Erst die Zutaten in die Schüssel. Tippe auf Mehl, Ei und Zucker.",
+  "s07-zutaten": "Erst die Zutaten in die Schüssel. Zieh Mehl, Ei und Zucker hinein.",
   "s07-ruehren": "Jetzt wird gerührt! Dreh den Löffel im Kreis.",
   "s07-ausstechen": "Und jetzt Kekse ausstechen. Zieh die Förmchen auf den Teig.",
   "s07-fertig": "Die Kekse sind fertig! Die ganze Familie freut sich.",

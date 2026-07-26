@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Tippziel } from "@/components/Tippziel";
@@ -13,22 +13,22 @@ import * as voice from "@/lib/voice";
 const STATION = STATIONS[10];
 
 /**
- * Der kleine Bär, wie er durchs Fenster zu sehen ist.
+ * Der kleine Bär — groß und mitten auf der Bühne.
  *
- * Die Sterne lagen früher quer über Tims Gesicht — mitten im Zimmer, einer
- * genau auf seinem Auge. Sie stehen jetzt rechts neben seinem Kopf, wo die
- * Fensterscheibe und der Vorhang zu sehen sind: der einzige Fleck des Bildes,
- * der nach draußen zeigt. Deshalb liegt das Sternbild dort auf der Seite —
- * am Himmel stehen Sternbilder ohnehin in jeder Lage.
+ * Die Sterne standen erst klein am rechten Rand, damit sie Tims Gesicht frei
+ * lassen. Groß in der Mitte sind sie das, was sie sein sollen: das Bild, das
+ * das Kind zusammensetzt. Die Abstände sind so gewählt, dass sich bei 12 cqw
+ * keine zwei Tippflächen überlappen — sonst trifft ein Tipp den Nachbarn, und
+ * ein Stern bleibt für immer dunkel.
  */
 const STERNE = [
-  { id: 0, x: 67, y: 31 },
-  { id: 1, x: 74, y: 26 },
-  { id: 2, x: 81, y: 21 },
-  { id: 3, x: 88, y: 19 },
-  { id: 4, x: 95, y: 23 },
-  { id: 5, x: 90, y: 31 },
-  { id: 6, x: 79, y: 33 },
+  { id: 0, x: 20, y: 58 },
+  { id: 1, x: 32, y: 52 },
+  { id: 2, x: 44, y: 46 },
+  { id: 3, x: 57, y: 42 },
+  { id: 4, x: 72, y: 46 },
+  { id: 5, x: 70, y: 62 },
+  { id: 6, x: 52, y: 59 },
 ];
 
 const LINIEN: [number, number][] = [
@@ -54,12 +54,18 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const [zugedeckt, setZugedeckt] = useState(false);
   const [fertig, setFertig] = useState(false);
 
-  const satz: LineId =
-    phase === "sterne"
-      ? leuchtend.length === 0
-        ? "s11-intro"
-        : "s11-erklaerung"
-      : "s11-decke";
+  /*
+   * Der Auftrag steht von Anfang an oben.
+   *
+   * Vorher hieß es zuerst nur „Es ist Abend …" — dass man die Sterne antippen
+   * soll, erfuhr das Kind erst nach dem ersten Tipp. Jetzt steht der Auftrag
+   * gleich da, und die Einleitung wird davor gesprochen.
+   */
+  const satz: LineId = phase === "sterne" ? "s11-erklaerung" : "s11-decke";
+
+  useEffect(() => {
+    void voice.speakSequence(["s11-intro", "s11-erklaerung"], 250);
+  }, []);
 
   const alleSterne = leuchtend.length >= STERNE.length;
 
@@ -96,6 +102,7 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       weiterText="Das war ein toller Tag"
       helligkeit={zugedeckt ? 0.6 : 0.44}
       dunkel
+      stummerRahmen={phase === "sterne"}
     >
       {/* Nachtblau über der Szene */}
       <motion.div
@@ -135,11 +142,7 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             key={stern.id}
             x={stern.x}
             y={stern.y}
-            // So groß, wie es geht, ohne dass sich zwei Tippflächen
-            // überlappen — sonst trifft ein Tipp den Nachbarn, und zwei
-            // Sterne bleiben für immer dunkel. Am kleinsten Abstand im
-            // Sternbild (7,2 cqw) hängt diese Zahl.
-            groesse={7}
+            groesse={12}
             aktiv={phase === "sterne" && !an}
             label="Stern"
             onTipp={() => sternAntippen(stern.id)}
@@ -173,7 +176,7 @@ export function GuteNacht({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             className="absolute z-30 rounded-full px-[3cqw] py-[1.2cqw] text-[2.8cqw] font-semibold"
             style={{
               left: "50%",
-              top: "46%",
+              top: "80%",
               transform: "translate(-50%, -50%)",
               background: "rgba(255,255,255,0.16)",
               color: "#fdf6ec",

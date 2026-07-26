@@ -1,4 +1,11 @@
-import { ADRESSE, BILDER, browserStarten, spielStarten, randPruefen } from "./helfer.mjs";
+import {
+  ADRESSE,
+  BILDER,
+  browserStarten,
+  spielStarten,
+  randPruefen,
+  leistePruefen,
+} from "./helfer.mjs";
 
 const URL = ADRESSE + "/";
 const SHOT = BILDER;
@@ -17,6 +24,7 @@ const shot = async (name) => {
   await page.screenshot({ path: `${SHOT}/${name}.png` });
   // Bei der Gelegenheit gleich nachsehen, ob alles im Bild liegt.
   fehler.push(...(await randPruefen(page, name)));
+  fehler.push(...(await leistePruefen(page, name)));
   console.log("  📸", name);
 };
 
@@ -168,8 +176,9 @@ await page.waitForTimeout(900);
 // ------------------------------------------------------------------ 7 Kekse
 console.log("→ 7 Kekse");
 await shot("15-kekse-zutaten");
+// Die Zutaten werden in die Schüssel gezogen, nicht angetippt.
 for (const z of ["Mehl", "Ei", "Zucker"]) {
-  await page.getByRole("button", { name: z }).click({ force: true });
+  await ziehenNachPunkt(page.locator(`[aria-label="${z}"]`).first(), 52, 56);
   await page.waitForTimeout(400);
 }
 await page.waitForTimeout(1000);

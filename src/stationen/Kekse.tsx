@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Ablage, Ziehbar } from "@/components/dnd";
-import { Tippziel } from "@/components/Tippziel";
 import { ERFOLGSPAUSE, STATIONS } from "@/lib/stations";
 import { zahl, type LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
@@ -52,24 +51,38 @@ export function Kekse({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const naechsterKey = useRef(0);
   const schuesselRef = useRef<HTMLDivElement>(null);
 
+  /*
+   * Der Auftrag steht von Anfang an oben.
+   *
+   * Vorher hieß es zuerst nur „In der Küche hilft Tim seiner Mama beim
+   * Backen" — was zu tun ist, erfuhr das Kind erst, nachdem es die erste
+   * Zutat erwischt hatte. Jetzt steht gleich der Auftrag da, und die
+   * Einleitung wird davor gesprochen: Der Rahmen schweigt (stummerRahmen),
+   * die Station gibt die Reihenfolge vor.
+   */
   const satz: LineId =
     phase === "zutaten"
-      ? drin.length === 0
-        ? "s07-intro"
-        : "s07-zutaten"
+      ? "s07-zutaten"
       : phase === "ruehren"
         ? "s07-ruehren"
         : "s07-ausstechen";
 
+  useEffect(() => {
+    void voice.speakSequence(["s07-intro", "s07-zutaten"], 250);
+  }, []);
+
   // ------------------------------------------------------------- Zutaten
-  const zutatRein = (id: string) => {
-    if (drin.includes(id)) return;
-    sfx.pop();
+  const zutatRein = (id: string, zone: string | null) => {
+    // Gezogen wird sie, wie die Früchte beim Frühstück — nur ein Tipp reicht
+    // nicht mehr. Landet sie daneben, hüpft sie freundlich zurück.
+    if (zone !== "schuessel" || drin.includes(id)) return false;
+    sfx.place();
     const neu = [...drin, id];
     setDrin(neu);
     if (neu.length >= ZUTATEN.length) {
       setTimeout(() => setPhase("ruehren"), 700);
     }
+    return true;
   };
 
   // -------------------------------------------------------------- Rühren
@@ -138,6 +151,7 @@ export function Kekse({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       abschlussSatz="s07-fertig"
       unschaerfe={1.2}
       schleier={0.48}
+      stummerRahmen={phase === "zutaten"}
     >
       {/* ----------------------------------------------- Schüssel / Teig */}
       <div
@@ -174,6 +188,15 @@ export function Kekse({ onGeschafft, onWeiter, onZurueck }: StationProps) {
             style={{ width: "100%", height: "100%", position: "relative" }}
           >
             <TeigFlaeche farbe={teigFarbe} loecher={kekse.length} />
+          </Ablage>
+        ) : phase === "zutaten" ? (
+          // In der Zutatenphase ist die Schüssel das Ziel zum Hineinziehen.
+          <Ablage
+            id="schuessel"
+            toleranzCqw={9}
+            style={{ width: "100%", height: "100%", position: "relative" }}
+          >
+            <Schuessel farbe={teigFarbe} fuellstand={drin.length / ZUTATEN.length} />
           </Ablage>
         ) : (
           <Schuessel farbe={teigFarbe} fuellstand={drin.length / ZUTATEN.length} />
@@ -236,37 +259,33 @@ export function Kekse({ onGeschafft, onWeiter, onZurueck }: StationProps) {
 
       {/* -------------------------------------------------- Phase Zutaten */}
       {phase === "zutaten" &&
-        ZUTATEN.map((zutat, i) => (
-          <Tippziel
-            key={zutat.id}
-            x={zutat.x}
-            y={zutat.y}
-            groesse={16}
-            aktiv={!drin.includes(zutat.id)}
-            label={zutat.name}
-            onTipp={() => zutatRein(zutat.id)}
-            hinweisNach={i === 0 ? 4000 : 0}
-            style={{ zIndex: 30 }}
-          >
-            <AnimatePresence>
-              {!drin.includes(zutat.id) && (
-                <motion.div
-                  className="flex w-full flex-col items-center gap-[0.6cqw]"
-                  exit={{ scale: 0.3, x: "20cqw", y: "-6cqw", opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+        ZUTATEN.map((zutat, i) =>
+          drin.includes(zutat.id) ? null : (
+            <Ziehbar
+              key={zutat.id}
+              id={zutat.id}
+              onAblegen={(zone) => zutatRein(zutat.id, zone)}
+              hinweis={i === 0 && drin.length === 0}
+              x={zutat.x}
+              y={zutat.y}
+              breite={16}
+              zIndex={30}
+            >
+              <div
+                className="flex w-full flex-col items-center gap-[0.6cqw]"
+                aria-label={zutat.name}
+              >
+                <Zutat id={zutat.id} farbe={zutat.farbe} />
+                <span
+                  className="rounded-full px-[1.6cqw] py-[0.4cqw] text-[2cqw] font-semibold"
+                  style={{ background: "rgba(255,255,255,0.85)", color: "#5f6b5c" }}
                 >
-                  <Zutat id={zutat.id} farbe={zutat.farbe} />
-                  <span
-                    className="rounded-full px-[1.6cqw] py-[0.4cqw] text-[2cqw] font-semibold"
-                    style={{ background: "rgba(255,255,255,0.85)", color: "#5f6b5c" }}
-                  >
-                    {zutat.name}
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Tippziel>
-        ))}
+                  {zutat.name}
+                </span>
+              </div>
+            </Ziehbar>
+          ),
+        )}
 
       {/* ----------------------------------------------- Phase Ausstechen */}
       {phase === "ausstechen" &&

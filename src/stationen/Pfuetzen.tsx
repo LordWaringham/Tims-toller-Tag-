@@ -16,14 +16,38 @@ const STATION = STATIONS[7];
  * Tim ist schon auf dem Bild — er stapft in Gummistiefeln durch den Regen.
  * Hier kommen nur die Pfützen dazu, in die das Kind ihn springen lässt.
  */
+/*
+ * Alle sechs müssen ganz zu sehen sein.
+ *
+ * Die unterste lag früher bei 94 Prozent und verschwand zur Hälfte hinter der
+ * Stickerleiste am unteren Rand — man konnte sie treffen, aber nicht sehen.
+ * Die Reihen sitzen jetzt höher, die letzte deutlich über der Leiste.
+ */
 const PFUETZEN = [
-  { id: "p1", x: 11, y: 80, breite: 17 },
-  { id: "p2", x: 30, y: 87, breite: 20 },
-  { id: "p3", x: 50, y: 79, breite: 16 },
-  { id: "p4", x: 70, y: 87, breite: 19 },
-  { id: "p5", x: 89, y: 80, breite: 17 },
-  { id: "p6", x: 50, y: 94, breite: 21 },
+  { id: "p1", x: 11, y: 72, breite: 17 },
+  { id: "p2", x: 30, y: 79, breite: 20 },
+  { id: "p3", x: 50, y: 71, breite: 16 },
+  { id: "p4", x: 70, y: 79, breite: 19 },
+  { id: "p5", x: 89, y: 72, breite: 17 },
+  { id: "p6", x: 50, y: 86, breite: 21 },
 ];
+
+/**
+ * Ein Gummistiefel als Mauszeiger.
+ *
+ * Tim stapft im Bild in Gummistiefeln durch den Regen — dann greift man hier
+ * auch mit einem in die Pfützen. Der Griffpunkt sitzt an der Sohle, damit man
+ * dort trifft, wo der Stiefel aufsetzt. Auf dem Tablet sieht man ihn nicht,
+ * dort ist ohnehin der Finger der Zeiger.
+ */
+const STIEFEL = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+     <path d="M11 4h13v20l11 7c2 1 3 3 3 5v2H11c-2 0-3-1-3-3V7c0-2 1-3 3-3z"
+           fill="#d1682c" stroke="#8a3d15" stroke-width="2.5" stroke-linejoin="round"/>
+     <path d="M11 4h13v5H8V7c0-2 1-3 3-3z" fill="#e8873f"/>
+     <path d="M9 33h29v3c0 1-1 2-2 2H11c-2 0-2-1-2-2z" fill="#8a3d15"/>
+   </svg>`,
+)}") 12 38, pointer`;
 
 export function Pfuetzen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
   const [gesprungen, setGesprungen] = useState<string[]>([]);
@@ -63,6 +87,7 @@ export function Pfuetzen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
       onWeiter={onWeiter}
       onZurueck={onZurueck}
       abschlussSatz="s08-fertig"
+      zeiger={STIEFEL}
       onSatzGesprochen={(gesagt) => {
         if (gesagt === "s08-intro") void voice.speakWennAufgenommen("tim-coco");
       }}

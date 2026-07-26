@@ -14,6 +14,7 @@ export function Buehne({
   unschaerfe = 0,
   helligkeit = 1,
   hintergrund,
+  zeiger,
   className = "",
 }: {
   /** Illustration aus dem Buch. */
@@ -25,6 +26,8 @@ export function Buehne({
   unschaerfe?: number;
   helligkeit?: number;
   hintergrund?: string;
+  /** Eigener Mauszeiger für diese Station, z. B. ein Gummistiefel. */
+  zeiger?: string;
   className?: string;
 }) {
   const bildStil: CSSProperties = {
@@ -40,7 +43,10 @@ export function Buehne({
 
   return (
     <div className="grid min-h-dvh w-full place-items-center bg-nacht">
-      <div className={`buehne ${className}`} style={{ background: hintergrund }}>
+      <div
+        className={`buehne ${className}`}
+        style={{ background: hintergrund, cursor: zeiger }}
+      >
         {bild && <div className="absolute inset-0" style={bildStil} aria-hidden />}
         {schleier > 0 && (
           <div
