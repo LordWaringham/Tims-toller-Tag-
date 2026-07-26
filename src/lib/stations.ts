@@ -143,6 +143,20 @@ export const STATIONS: Station[] = [
   },
 ];
 
+/**
+ * Wie lange das fertige Bild stehen bleibt, bevor der Jubel kommt.
+ *
+ * Vorher waren es je nach Station 0,5 bis 1,2 Sekunden — zu wenig, um
+ * überhaupt zu sehen, was man geschafft hat. Der Jubel legt sich mit Konfetti
+ * und Weichzeichner über die Szene; wer die aufgegangene Sonne, den fertigen
+ * Turm oder den angezogenen Tim nie zu Gesicht bekommt, erlebt den Erfolg
+ * nicht, sondern wird nur davon überrascht.
+ *
+ * In dieser Pause passiert schon etwas: Der Sticker der Station leuchtet
+ * unten in der Leiste auf, denn der Fortschritt wird sofort vermerkt.
+ */
+export const ERFOLGSPAUSE = 2000;
+
 export const STATION_IDS = STATIONS.map((s) => s.id);
 
 function stationIndex(id: StationId) {

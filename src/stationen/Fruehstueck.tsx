@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Ablage, Ziehbar } from "@/components/dnd";
 import { Frucht, FRUCHT_NAME, type FruchtArt } from "@/components/Fruechte";
-import { STATIONS } from "@/lib/stations";
+import { ERFOLGSPAUSE, STATIONS } from "@/lib/stations";
 import { zahl, type LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import * as voice from "@/lib/voice";
@@ -50,6 +50,7 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
   const [gezaehlt, setGezaehlt] = useState(0);
   const [schuessel, setSchuessel] = useState<InSchuessel[]>([]);
   const [danebenGetippt, setDanebenGetippt] = useState(0);
+  const [milch, setMilch] = useState(false);
   const [fertig, setFertig] = useState(false);
   const naechsterKey = useRef(0);
 
@@ -76,16 +77,27 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
 
     if (neu >= aktuell.anzahl) {
       const letzte = runde >= RUNDEN.length - 1;
-      setTimeout(() => {
-        if (letzte) {
-          onGeschafft();
-          setFertig(true);
-        } else {
+      if (letzte) {
+        /*
+         * Zum Schluss kommt die Milch dazu.
+         *
+         * Das ist die Belohnung und zugleich das Zeichen, dass es geschafft
+         * ist: Die Schüssel füllt sich sichtbar, bevor der Jubel kommt. Erst
+         * damit ist aus den Früchten ein Frühstück geworden.
+         */
+        onGeschafft();
+        setTimeout(() => {
+          setMilch(true);
+          sfx.water();
+        }, 350);
+        setTimeout(() => setFertig(true), ERFOLGSPAUSE + 900);
+      } else {
+        setTimeout(() => {
           setRunde((r) => r + 1);
           setGezaehlt(0);
           setDanebenGetippt(0);
-        }
-      }, 1100);
+        }, 1100);
+      }
     }
     return true;
   };
@@ -235,11 +247,26 @@ export function Fruehstueck({ onGeschafft, onWeiter, onZurueck }: StationProps) 
               animate={{ scale: 1, y: 0, rotate: f.dreh }}
               transition={{ type: "spring", stiffness: 300, damping: 18 }}
             >
-              <Frucht art={f.art} className="w-full drop-shadow" />
+              <Frucht art={f.art} className="w-full drop-shadow" geschaelt />
             </motion.div>
           ))}
         </AnimatePresence>
       </Ablage>
+
+      {/* Die Milch liegt hinter den Früchten — sie schwimmen darauf. */}
+      <AnimatePresence>
+        {milch && (
+          <motion.div
+            className="huelle pointer-events-none"
+            style={{ left: "50%", top: "76%", width: "62cqw", zIndex: 9 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            aria-hidden
+          >
+            <Milch />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div
         className="huelle pointer-events-none"
@@ -308,4 +335,62 @@ function neueFrucht(art: FruchtArt, key: number): InSchuessel {
     y: streuIn(key, 12, 22, 78),
     dreh: streuIn(key, 13, -25, 25),
   };
+}
+
+/**
+ * Milch, die in die Schüssel läuft.
+ *
+ * Der Strahl kommt von oben, dann steigt der Spiegel. Die Form folgt der
+ * Innenseite der Schüssel aus SchuesselRueckseite, damit die Milch wirklich
+ * darin steht und nicht davor liegt.
+ */
+function Milch() {
+  return (
+    <svg viewBox="0 0 200 130" className="w-full overflow-visible" aria-hidden>
+      <defs>
+        {/*
+          Sichtbar ist von der Schüssel nur die Öffnung.
+
+          Die Vorderseite ist eine gefüllte Fläche und deckt alles darunter zu;
+          ein Milchspiegel im Bauch der Schüssel wäre unsichtbar. Gefüllt wird
+          deshalb genau die Ellipse der Öffnung — von unten nach oben, so wie
+          man beim Hineinschauen den Spiegel steigen sieht.
+        */}
+        <clipPath id="schuesselOeffnung">
+          <ellipse cx="100" cy="34" rx="94" ry="25" />
+        </clipPath>
+      </defs>
+
+      {/* Der Strahl von oben */}
+      <motion.rect
+        x="94"
+        y="-64"
+        width="12"
+        height="86"
+        rx="6"
+        fill="#fdfbf4"
+        initial={{ opacity: 0, scaleY: 0 }}
+        animate={{ opacity: [0, 1, 1, 0], scaleY: [0, 1, 1, 1] }}
+        transition={{ duration: 1.6, times: [0, 0.16, 0.72, 1], ease: "easeOut" }}
+        style={{ transformOrigin: "100px -64px" }}
+      />
+
+      <g clipPath="url(#schuesselOeffnung)">
+        {/*
+          Verschoben statt in der Höhe verändert: Motion deutet `y` an einem
+          SVG-Element als Verschiebung, nicht als Attribut — eine Animation von
+          `y` und `height` bliebe wirkungslos.
+        */}
+        <motion.g
+          initial={{ y: 42 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 1.2, delay: 0.34, ease: "easeOut" }}
+        >
+          <rect x="0" y="26" width="200" height="46" fill="#fdfbf4" />
+          <ellipse cx="100" cy="26" rx="92" ry="8" fill="#ffffff" />
+          <ellipse cx="100" cy="26" rx="92" ry="8" fill="rgba(180,198,212,0.22)" />
+        </motion.g>
+      </g>
+    </svg>
+  );
 }

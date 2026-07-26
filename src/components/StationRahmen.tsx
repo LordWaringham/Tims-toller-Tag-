@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Buehne } from "./Buehne";
 import { Sprechblase } from "./Sprechblase";
 import { Jubel } from "./Jubel";
@@ -67,6 +67,22 @@ export function StationRahmen({
   stummerRahmen?: boolean;
 }) {
   const { istFertig } = useKindStand();
+
+  /*
+   * Ist die Aufgabe in diesem Durchgang gerade gelöst worden?
+   *
+   * Zwischen dem letzten richtigen Tipp und dem Jubel liegen zwei Sekunden, in
+   * denen das fertige Bild zu sehen ist. Oben stand in dieser Zeit noch der
+   * alte Auftrag — „Tippe auf Tim!", während Tim längst wach war. Der Hinweis
+   * verschwindet jetzt in dem Moment, in dem die Aufgabe erledigt ist.
+   *
+   * Der Vergleich mit dem Stand beim Öffnen ist nötig, weil eine geschaffte
+   * Station wiederholt werden darf: Dort wäre `istFertig` von Anfang an wahr,
+   * und der Hinweis käme nie.
+   */
+  const [warSchonFertig] = useState(() => istFertig(station.id));
+  const geradeGeschafft = istFertig(station.id) && !warSchonFertig;
+
   const gesprochen = useRef<LineId | null>(null);
   // Über eine Ref, damit ein neuer Rückruf den Satz nicht erneut auslöst.
   const fertigGesprochenRef = useRef(onSatzGesprochen);
@@ -98,7 +114,7 @@ export function StationRahmen({
       helligkeit={helligkeit}
       hintergrund={hintergrund}
     >
-      <Sprechblase id={fertig ? null : satz} dunkel={dunkel} />
+      <Sprechblase id={fertig || geradeGeschafft ? null : satz} dunkel={dunkel} />
 
       <button
         type="button"

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Ablage, Ziehbar } from "@/components/dnd";
-import { STATIONS } from "@/lib/stations";
+import { ERFOLGSPAUSE, STATIONS } from "@/lib/stations";
 import type { LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import { mischen, neueSaat } from "@/lib/streu";
@@ -68,7 +68,7 @@ export function Schmetterlinge({ onGeschafft, onWeiter, onZurueck }: StationProp
     setGelandet(neu);
     if (neu.length >= FARBEN.length) {
       onGeschafft();
-      setTimeout(() => setFertig(true), 900);
+      setTimeout(() => setFertig(true), ERFOLGSPAUSE);
     }
     return true;
   };

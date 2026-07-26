@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Ablage, Ziehbar } from "@/components/dnd";
 import { TimFigur } from "@/components/TimFigur";
-import { STATIONS } from "@/lib/stations";
+import { ERFOLGSPAUSE, STATIONS } from "@/lib/stations";
 import type { LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import * as voice from "@/lib/voice";
@@ -60,7 +60,7 @@ export function Anziehen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           await voice.speak("s02-buch");
         }
         setFertig(true);
-      }, 700);
+      }, ERFOLGSPAUSE);
     }
     return true;
   };

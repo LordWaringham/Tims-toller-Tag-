@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
 import { Ablage, Ziehbar } from "@/components/dnd";
-import { STATIONS } from "@/lib/stations";
+import { ERFOLGSPAUSE, STATIONS } from "@/lib/stations";
 import { zahl, type LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import * as voice from "@/lib/voice";
@@ -70,7 +70,7 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
 
     if (neu.length >= ZIEL) {
       onGeschafft();
-      setTimeout(() => setFertig(true), 1200);
+      setTimeout(() => setFertig(true), ERFOLGSPAUSE);
     }
     return true;
   };

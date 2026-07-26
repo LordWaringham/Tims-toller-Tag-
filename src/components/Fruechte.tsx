@@ -4,7 +4,16 @@
 
 export type FruchtArt = "erdbeere" | "banane" | "heidelbeere";
 
-export function Frucht({ art, className }: { art: FruchtArt; className?: string }) {
+export function Frucht({
+  art,
+  className,
+  geschaelt = false,
+}: {
+  art: FruchtArt;
+  className?: string;
+  /** Banane ohne Schale — so, wie sie in die Schüssel gehört. */
+  geschaelt?: boolean;
+}) {
   if (art === "erdbeere") {
     return (
       <svg viewBox="0 0 100 110" className={className} aria-hidden>
@@ -41,6 +50,44 @@ export function Frucht({ art, className }: { art: FruchtArt; className?: string 
   }
 
   if (art === "banane") {
+    /*
+     * In der Schüssel liegt sie ohne Schale.
+     *
+     * Eine ganze Banane mit Schale ins Müsli zu legen, macht niemand — und ein
+     * Kind sieht das sofort. Im Korb links liegt sie deshalb ungeschält, in der
+     * Schüssel geschält: hellcreme statt gelb, ohne den braunen Stiel, mit den
+     * dunkleren Enden und der feinen Rille, die eine geschälte Banane hat.
+     */
+    if (geschaelt) {
+      return (
+        <svg viewBox="0 0 110 100" className={className} aria-hidden>
+          <path
+            d="M16 24 q4 44 40 56 q34 11 46 -14 q-6 6 -18 4 q-30 -5 -44 -30 q-6 -11 -6 -18z"
+            fill="#f8ecc0"
+            stroke="#dcc78a"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M24 30 q6 34 36 46"
+            fill="none"
+            stroke="rgba(255,255,255,0.75)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M30 38 q8 28 32 40"
+            fill="none"
+            stroke="rgba(200,175,110,0.5)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+          {/* Die beiden Schnittenden sind etwas dunkler. */}
+          <ellipse cx="18" cy="25" rx="4.5" ry="3.4" fill="#e6d29a" transform="rotate(-28 18 25)" />
+          <ellipse cx="99" cy="68" rx="4.5" ry="3.4" fill="#e6d29a" transform="rotate(24 99 68)" />
+        </svg>
+      );
+    }
     return (
       <svg viewBox="0 0 110 100" className={className} aria-hidden>
         <path

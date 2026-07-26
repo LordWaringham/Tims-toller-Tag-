@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { StationRahmen, type StationProps } from "@/components/StationRahmen";
-import { STATIONS } from "@/lib/stations";
+import { ERFOLGSPAUSE, STATIONS } from "@/lib/stations";
 import type { LineId } from "@/lib/lines";
 import * as sfx from "@/lib/sfx";
 import * as voice from "@/lib/voice";
@@ -71,7 +71,7 @@ export function Blumen({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           sfx.chime(bluehendRef.current.size + 2);
           if (bluehendRef.current.size >= BLUMEN.length) {
             onGeschafft();
-            setTimeout(() => setFertig(true), 1100);
+            setTimeout(() => setFertig(true), ERFOLGSPAUSE);
           } else if (bluehendRef.current.size === 1) {
             void voice.speak("s06-blueht");
           }
