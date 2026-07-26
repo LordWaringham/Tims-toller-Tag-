@@ -25,6 +25,16 @@ export const KINDER: Kind[] = [
 /** Von wem das Spiel kommt. */
 export const SCHENKER = "Onkel Tom";
 
+/**
+ * Sein Bild — wird auf dem Titelbild eingeblendet, während die Widmung
+ * gesprochen wird.
+ *
+ * Die Datei ist nicht Teil des Spiels: Liegt sie nicht in `public/`, erscheint
+ * einfach kein Bild, und alles andere läuft weiter wie bisher. Ein Kind, das
+ * „von Onkel Tom" hört, soll wissen, wer das ist.
+ */
+export const SCHENKER_BILD = "/onkel-tom.webp";
+
 /** „Luise, Maya und Marla“ — für Widmungen und Anreden. */
 export const NAMEN = KINDER.map((k) => k.name)
   .join(", ")

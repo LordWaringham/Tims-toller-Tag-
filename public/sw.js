@@ -26,13 +26,25 @@ const VORAB = [
   "/scenes/schafe.webp",
   "/scenes/schmetterlinge.webp",
   "/scenes/gutenacht.webp",
+  // Das Bild von Onkel Tom ist optional — siehe unten, warum das hier
+  // trotzdem gefahrlos stehen darf.
+  "/onkel-tom.webp",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => cache.addAll(VORAB))
+      .then((cache) =>
+        /*
+         * Datei für Datei statt cache.addAll().
+         *
+         * addAll() wirft, sobald eine einzige Adresse nicht da ist — dann
+         * läge gar nichts im Cache und das Spiel wäre offline leer. Eine
+         * fehlende Datei darf die anderen elf nicht mitreißen.
+         */
+        Promise.all(VORAB.map((pfad) => cache.add(pfad).catch(() => {}))),
+      )
       .then(() => self.skipWaiting())
       .catch(() => self.skipWaiting()),
   );

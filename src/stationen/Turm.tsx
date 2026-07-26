@@ -116,17 +116,30 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
         </span>
       </div>
 
-      {/* ------------------------------------------------------- Der Turm */}
+      {/*
+        Die Ablagefläche: die ganze Säule über dem Bauplatz.
+
+        Vorher endete sie unten bei 64% — dort, wo der fertige Turm einmal
+        stehen wird. Der erste Stein musste deshalb hoch über die gestrichelte
+        Linie gezogen werden, obwohl unten noch gar nichts stand. Wer ihn
+        einfach nach rechts auf den Boden legte, bekam ein „Nö". Genau
+        andersherum baut ein Kind: von unten nach oben. Jetzt reicht die Fläche
+        vom Boden bis über die Zielmarke, und der Stein darf überall in der
+        Säule losgelassen werden.
+      */}
       <Ablage
         id="turm"
         toleranzCqw={9}
         style={{
           position: "absolute",
           left: "68%",
-          top: `${BODEN - 24}%`,
-          width: "26cqw",
-          height: "62cqw",
-          transform: "translate(-50%, -100%)",
+          top: "4%",
+          width: "30cqw",
+          height: `${BODEN + 4}%`,
+          transform: "translateX(-50%)",
+          // Unsichtbar und unantastbar: Die Fläche wird nur beim Loslassen
+          // vermessen, sie soll nichts darunter blockieren.
+          pointerEvents: "none",
           zIndex: 5,
         }}
       />
@@ -141,10 +154,42 @@ export function Turm({ onGeschafft, onWeiter, onZurueck }: StationProps) {
           height: "1.2cqw",
           transform: "translate(-50%, -50%)",
           borderRadius: "9999px",
-          background: "rgba(120,90,60,0.25)",
+          background: "rgba(120,90,60,0.35)",
         }}
         aria-hidden
       />
+
+      {/*
+        Der Bauplatz — ein Umriss in Steingröße, direkt auf dem Boden.
+
+        Ohne ihn war nicht zu sehen, wohin der erste Stein soll: Die Zielmarke
+        oben zeigt nur, wie hoch der Turm werden soll, und die Bodenlinie ist
+        ein blasser Strich. Der Umriss atmet leise, solange noch kein Stein
+        liegt, und verschwindet, sobald gebaut wird — dann zeigt der Turm
+        selbst, wo es weitergeht.
+      */}
+      {gestapelt.length === 0 && (
+        <motion.div
+          className="pointer-events-none absolute z-10 grid place-items-center"
+          style={{
+            left: "68%",
+            top: `${BODEN}%`,
+            width: `${STEIN_BREITE}cqw`,
+            height: `${STEIN_HOEHE}cqw`,
+            translate: "-50% -100%",
+            borderRadius: "1.4cqw",
+            border: "0.5cqw dashed rgba(95,107,92,0.5)",
+            background: "rgba(255,255,255,0.28)",
+          }}
+          animate={{ opacity: [0.55, 1, 0.55] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          aria-hidden
+        >
+          <span className="text-[2.3cqw] font-semibold" style={{ color: "#5f6b5c" }}>
+            Hierhin
+          </span>
+        </motion.div>
+      )}
 
       <motion.div
         className="pointer-events-none absolute z-20"

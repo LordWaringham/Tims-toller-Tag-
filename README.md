@@ -158,8 +158,21 @@ src/
 public/
   scenes/         die zwölf Illustrationen aus dem Buch
   audio/          die eingesprochenen Sätze
+  onkel-tom.webp  optional: das Bild zur Widmung (siehe unten)
 tests/            Browsertests (Playwright)
 ```
+
+### Das Bild von Onkel Tom
+
+Während auf dem Titelbild „Für Luise, Maya und Marla. Von Onkel Tom“
+gesprochen wird, blendet sich links ein rundes Foto ein und danach wieder
+aus — damit die Kinder wissen, wer Onkel Tom ist.
+
+Dafür muss `public/onkel-tom.webp` vorhanden sein. Am besten quadratisch,
+etwa 500 × 500 Pixel; angezeigt wird es als Kreis, das Bild wird also an den
+Rändern beschnitten. Fehlt die Datei, erscheint einfach kein Bild und alles
+andere läuft unverändert weiter. Der Pfad steht in `src/lib/kinder.ts`
+(`SCHENKER_BILD`).
 
 Zwei Dinge, über die man beim Weiterbauen leicht stolpert:
 

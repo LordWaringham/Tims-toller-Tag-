@@ -1,24 +1,29 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
-import { NAMEN, SCHENKER } from "@/lib/kinder";
+import { NAMEN, SCHENKER, SCHENKER_BILD } from "@/lib/kinder";
 
 /** Startbildschirm mit dem Buchcover. */
 export function Titelbild({
   onSpielen,
   onEltern,
   weiterspielen,
+  schenkerBild = false,
 }: {
   onSpielen: () => void;
   onEltern: () => void;
   /** true, wenn schon ein Tag begonnen wurde. */
   weiterspielen: boolean;
+  /** Liegt public/onkel-tom.webp vor? Beim Bauen festgestellt. */
+  schenkerBild?: boolean;
 }) {
   /** Läuft gerade die Begrüßung? */
   const [laeuft, setLaeuft] = useState(false);
+  /** Wird gerade die Widmung gesprochen? Dann zeigt sich Onkel Tom. */
+  const [zeigtSchenker, setZeigtSchenker] = useState(false);
   const abgebrochen = useRef(false);
   useEffect(
     () => () => {
@@ -52,8 +57,21 @@ export function Titelbild({
     setLaeuft(true);
     void (async () => {
       await voice.speak("titel");
+      /*
+       * „Für Luise, Maya und Marla. Von Onkel Tom." — und genau dazu sein
+       * Bild. Der Name allein sagt einem Dreijährigen nichts; das Gesicht
+       * schon. Es kommt mit dem Satz und geht mit ihm wieder.
+       *
+       * Nur wenn die Widmung wirklich gesprochen wird: Ohne Aufnahme bliebe
+       * sie still, und das Bild würde bloß kurz aufblitzen.
+       */
+      const widmungKommt = schenkerBild && (await voice.gibtEsAufnahme("widmung"));
+      if (abgebrochen.current) return;
+      if (widmungKommt) setZeigtSchenker(true);
       // Die Widmung bleibt still, bis eine Aufnahme dafür vorliegt.
       await voice.speakWennAufgenommen("widmung");
+      if (abgebrochen.current) return;
+      setZeigtSchenker(false);
       await voice.speak("willkommen");
       if (!abgebrochen.current) onSpielen();
     })();
@@ -148,6 +166,52 @@ export function Titelbild({
 
           <div className="flex-1" />
         </div>
+
+        {/*
+          Onkel Tom, während seine Widmung gesprochen wird.
+
+          Links im Wolkenfeld: Tim steht in der Mitte, der Knopf liegt davor,
+          und unten sitzt die Widmung als Schrift. Dort ist Platz, ohne dass
+          etwas verdeckt wird. Leicht gekippt und mit weißem Rand — wie ein
+          Foto, das jemand ins Buch gelegt hat.
+        */}
+        <AnimatePresence>
+          {zeigtSchenker && (
+            <motion.div
+              className="pointer-events-none absolute z-20 flex flex-col items-center gap-[1.2cqw]"
+              style={{ left: "17%", top: "44%", translate: "-50% -50%" }}
+              initial={{ opacity: 0, scale: 0.6, rotate: -12 }}
+              animate={{ opacity: 1, scale: 1, rotate: -4 }}
+              exit={{ opacity: 0, scale: 0.85, rotate: -10 }}
+              transition={{ type: "spring", stiffness: 200, damping: 18 }}
+              aria-hidden
+            >
+              {/*
+                Bewusst ein einfaches <img>: Beim statischen Export kann
+                next/image ohnehin nichts optimieren, und ob die Datei da ist,
+                ist beim Bauen längst geklärt.
+              */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={SCHENKER_BILD}
+                alt=""
+                className="rounded-full object-cover"
+                style={{
+                  width: "21cqw",
+                  height: "21cqw",
+                  border: "0.9cqw solid rgba(255,255,255,0.92)",
+                  boxShadow: "0 1cqw 2.4cqw rgba(0,0,0,0.28)",
+                }}
+              />
+              <span
+                className="rounded-full px-[2.4cqw] py-[0.7cqw] text-[2.6cqw] font-semibold whitespace-nowrap"
+                style={{ background: "rgba(255,255,255,0.9)", color: "#54604f" }}
+              >
+                {SCHENKER}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/*
           Während der Begrüßung ist die ganze Fläche ein Weiter-Knopf. Ein

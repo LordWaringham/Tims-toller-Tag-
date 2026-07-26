@@ -236,6 +236,17 @@ export async function speakLieber(genauer: LineId, sonst: LineId): Promise<void>
   return playRecording(datei);
 }
 
+/**
+ * Gibt es für diesen Satz eine echte Aufnahme?
+ *
+ * Für Bilder, die zu einem bestimmten Satz eingeblendet werden: Wird der Satz
+ * gar nicht gesprochen, soll auch das Bild nicht kurz aufblitzen.
+ */
+export async function gibtEsAufnahme(id: string): Promise<boolean> {
+  const m = await loadManifest();
+  return Boolean(m[id]);
+}
+
 /** Sätze nacheinander, mit kleiner Pause dazwischen. */
 export async function speakSequence(ids: LineId[], gapMs = 250): Promise<void> {
   for (const id of ids) {

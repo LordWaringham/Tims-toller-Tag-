@@ -44,7 +44,7 @@ const SPIELE: Record<StationId, (p: StationProps) => React.ReactElement> = {
 
 type Ansicht = "titel" | "wer" | "karte" | "station" | "sticker" | "eltern" | "finale";
 
-export function Spiel() {
+export function Spiel({ schenkerBild = false }: { schenkerBild?: boolean }) {
   const [kindId, setKindId] = useState<string | null>(null);
   const kind = kindFinden(kindId);
   const { abschliessen, istOffen, istFertig, naechsteOffene } = useProgress(kindId);
@@ -101,6 +101,7 @@ export function Spiel() {
           {ansicht === "titel" && (
             <Titelbild
               weiterspielen={hatJemandGespielt}
+              schenkerBild={schenkerBild}
               onSpielen={() => setAnsicht("wer")}
               onEltern={() => setAnsicht("eltern")}
             />

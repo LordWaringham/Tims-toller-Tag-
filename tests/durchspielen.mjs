@@ -126,7 +126,14 @@ for (let i = 0; i < 6; i++) {
   const steine = page.locator('.buehne > .huelle');
   const anzahl = await steine.count();
   if (!anzahl) { fehler.push("Turm: keine Steine mehr"); break; }
-  await ziehenNachPunkt(steine.first(), 68, 62);
+  /*
+   * Bewusst auf Bodenhöhe abgelegt, nicht oben in der Luft.
+   *
+   * So legt ein Kind den ersten Stein hin: nach rechts auf den Bauplatz.
+   * Früher endete die Ablagefläche bei 64% — der Stein musste über die
+   * gestrichelte Zielmarke gezogen werden, sonst kam ein „Nö".
+   */
+  await ziehenNachPunkt(steine.first(), 68, 84);
   await page.waitForTimeout(420);
 }
 await page.waitForTimeout(1500);

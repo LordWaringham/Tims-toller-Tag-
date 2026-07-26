@@ -46,9 +46,9 @@ Insgesamt: **93 Sätze**.
 | `widmung.mp3` | Für Luise, Maya und Marla. Von Onkel Tom. |
 | `finale-stolz.mp3` | Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an! |
 | `tim-piraten.mp3` | Weißt du was? Im Kindergarten ist Tim bei den Piraten. Piraten bauen die höchsten Türme! |
-| `tim-freunde.mp3` | Leon und Annika kommen gleich zum Spielen. Vorher wird noch aufgeräumt. |
-| `tim-coco.mp3` | Leons Hund Coco springt am liebsten mit in die Pfützen. |
-| `tim-morgen.mp3` | Morgen erzähle ich Leon und Annika alles. Und Coco natürlich auch. |
+| `tim-freunde.mp3` | Tims Freunde Leon und Annika kommen gleich zum Spielen. Vorher wird noch aufgeräumt. |
+| `tim-coco.mp3` | Coco ist der Hund von Tims Freund Leon. Er springt am liebsten mit in die Pfützen. |
+| `tim-morgen.mp3` | Morgen erzählt Tim alles seinen Freunden Leon und Annika. Und dem Hund Coco natürlich auch. |
 | `tim-pflaster.mp3` | Siehst du das Pflaster an Tims Knie? Das hat er fast immer — vom Rad fahren. |
 
 ## Zahlen zum Mitzählen
@@ -101,7 +101,7 @@ Insgesamt: **93 Sätze**.
 
 | Dateiname | Text |
 | --- | --- |
-| `s04-intro.mp3` | Bau mit Tim einen riesigen Turm. Zieh die Bausteine nach oben. |
+| `s04-intro.mp3` | Bau mit Tim einen riesigen Turm. Zieh die Bausteine auf den Bauplatz. |
 | `s04-weiter.mp3` | Noch ein Stein! |
 | `s04-fertig.mp3` | Schau mal, Teddy! Fast so hoch wie der Elbtower! |
 
