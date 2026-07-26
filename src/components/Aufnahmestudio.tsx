@@ -15,6 +15,20 @@ import { packeZip } from "@/lib/zip";
 
 type Zustand = "laedt" | "bereit" | "kein-mikrofon";
 
+/**
+ * Wann eine Aufnahme nicht mehr das sein kann, was sie sein soll.
+ *
+ * Zweimal kam eine Datei mit einer Dreiviertelstunde toter Zeit vor dem
+ * gesprochenen Satz zurück — einmal 45, einmal 63 Minuten. Der Aufnehmer läuft
+ * weiter, wenn das Gerät zwischendurch einschläft oder der Browser in den
+ * Hintergrund gerät, und schreibt die ganze Lücke mit. Im Spiel hätte das
+ * bedeutet: Das Kind löst die Aufgabe und wartet danach eine Stunde.
+ *
+ * Der längste Satz im Spiel dauert gut sechs Sekunden. Alles jenseits von
+ * vierzig ist mit Sicherheit ein Unfall.
+ */
+const HOECHSTDAUER = 40;
+
 export function Aufnahmestudio() {
   const [zustand, setZustand] = useState<Zustand>("laedt");
   const [aufnahmen, setAufnahmen] = useState<Map<string, Aufnahme>>(new Map());
@@ -27,6 +41,10 @@ export function Aufnahmestudio() {
   const [packt, setPackt] = useState(false);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
+  /** Räumt Zeitschaltung und Sichtbarkeitswächter einer laufenden Aufnahme ab. */
+  const wachenRef = useRef<(() => void) | null>(null);
+  /** Über eine Ref, weil die Wächter vor stoppen() angelegt werden. */
+  const stoppenRef = useRef<(() => void) | null>(null);
   const stromRef = useRef<MediaStream | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const startRef = useRef(0);
@@ -90,11 +108,29 @@ export function Aufnahmestudio() {
         };
         recorder.onstop = async () => {
           const blob = new Blob(stuecke, { type: art.mimeType || "audio/webm" });
+          const gedauert = (Date.now() - startRef.current) / 1000;
+          if (gedauert > HOECHSTDAUER) {
+            /*
+             * Verworfen, nicht gespeichert.
+             *
+             * Eine solche Datei ist nicht zu retten: Vor dem Satz liegen
+             * Minuten oder Stunden Stille, und im Spiel wartet danach ein
+             * Kind darauf, dass es weitergeht. Lieber gleich hier sagen,
+             * was los ist, als es später in der fertigen App zu merken.
+             */
+            const min = Math.round(gedauert / 60);
+            setMeldung(
+              `Die Aufnahme war ${min > 1 ? `${min} Minuten` : `${Math.round(gedauert)} Sekunden`} lang — ` +
+                "dazwischen ist das Gerät wohl eingeschlafen oder der Browser war im Hintergrund. " +
+                "Sie wurde verworfen. Bitte den Satz noch einmal aufnehmen und dabei auf dieser Seite bleiben.",
+            );
+            return;
+          }
           const neue: Aufnahme = {
             id,
             blob,
             endung: art.endung,
-            dauer: (Date.now() - startRef.current) / 1000,
+            dauer: gedauert,
             zeitpunkt: Date.now(),
           };
           await sichern(neue);
@@ -103,12 +139,32 @@ export function Aufnahmestudio() {
         recorderRef.current = recorder;
         startRef.current = Date.now();
         setDauer(0);
+        setMeldung(null);
         recorder.start();
         setLaeuft(id);
         tickerRef.current = setInterval(
           () => setDauer((Date.now() - startRef.current) / 1000),
           100,
         );
+
+        /*
+         * Zwei Wächter, damit es gar nicht erst so weit kommt.
+         *
+         * Der Sichtbarkeitswächter greift im häufigsten Fall: Das Handy wird
+         * gesperrt oder der Browser wechselt die Ansicht — dann ist der Satz
+         * ohnehin nicht mehr zu sprechen, und der Aufnehmer hört sofort auf.
+         * Die Zeitschaltung fängt den Rest ab, etwa ein vergessenes Fenster.
+         */
+        const aufhoeren = () => recorderRef.current && stoppenRef.current?.();
+        const beiVerdeckung = () => {
+          if (document.hidden) aufhoeren();
+        };
+        document.addEventListener("visibilitychange", beiVerdeckung);
+        const notbremse = setTimeout(aufhoeren, HOECHSTDAUER * 1000);
+        wachenRef.current = () => {
+          document.removeEventListener("visibilitychange", beiVerdeckung);
+          clearTimeout(notbremse);
+        };
       } catch {
         setZustand("kein-mikrofon");
       }
@@ -119,10 +175,16 @@ export function Aufnahmestudio() {
   const stoppen = useCallback(() => {
     recorderRef.current?.stop();
     recorderRef.current = null;
+    wachenRef.current?.();
+    wachenRef.current = null;
     if (tickerRef.current) clearInterval(tickerRef.current);
     setLaeuft(null);
     setDauer(0);
   }, []);
+
+  useEffect(() => {
+    stoppenRef.current = stoppen;
+  }, [stoppen]);
 
   const anhoeren = useCallback(
     (id: LineId) => {

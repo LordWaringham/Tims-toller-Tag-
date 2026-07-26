@@ -76,7 +76,7 @@ export function Finale({
             className="text-[3cqw] leading-snug"
             style={{ color: "rgba(253,246,236,0.78)" }}
           >
-            {kind ? `Schlaf gut, ${kind.name}.` : "Schlaf gut."} Bis zum nächsten Mal —
+            {kind && !kind.gast ? `Schlaf gut, ${kind.name}.` : "Schlaf gut."} Bis zum nächsten Mal —
             dein {SCHENKER}
           </motion.p>
 

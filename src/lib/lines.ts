@@ -44,6 +44,8 @@ export const LINES = {
   "hallo-luise": "Hallo Luise! Schön, dass du da bist.",
   "hallo-maya": "Hallo Maya! Schön, dass du da bist.",
   "hallo-marla": "Hallo Marla! Schön, dass du da bist.",
+  // Der Gastplatz — für alle, die zu Besuch mitspielen.
+  "hallo-gast": "Hallo! Schön, dass du da bist.",
   widmung: "Für Luise, Maya und Marla. Von Onkel Tom.",
   "finale-stolz": "Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an!",
 

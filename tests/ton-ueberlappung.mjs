@@ -1,4 +1,4 @@
-import { ADRESSE, browserStarten, spielStarten } from "./helfer.mjs";
+import { ADRESSE, browserStarten, kindWaehlen } from "./helfer.mjs";
 
 const browser = await browserStarten(["--autoplay-policy=no-user-gesture-required"]);
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
@@ -59,8 +59,51 @@ await page.addInitScript(() => {
   };
 });
 
+let fruehesBild = null;
+let spaetesBild = null;
+
 await page.goto(ADRESSE + "/", { waitUntil: "networkidle" });
-await spielStarten(page);
+
+/*
+ * Onkel Tom zeigt sich zu seinem Namen — nicht früher.
+ *
+ * In widmung.webm läuft „Für Luise, Maya und Marla." bis 2,54s, dann kommt
+ * nach einer Atempause ab 3,20s „Von Onkel Tom.". Das Bild soll genau dort
+ * aufpoppen. Wird die Widmung neu eingesprochen und verschiebt sich der Name,
+ * schlägt diese Prüfung an — sonst würde es niemandem auffallen.
+ */
+const bild = page.locator('img[src="/onkel-tom.webp"]');
+await page.getByRole("button", { name: /Spielen|Weiterspielen/ }).click({ force: true });
+const widmungAb = await page
+  .waitForFunction(
+    () => window.__ton.ereignisse.find((e) => e.art === "start" && e.datei === "widmung.webm")?.t,
+    null,
+    { timeout: 15000 },
+  )
+  .then((h) => h.jsonValue())
+  .catch(() => null);
+
+if (!widmungAb) {
+  console.log("Widmung wurde gar nicht abgespielt — Bildprüfung übersprungen");
+} else {
+  const seitBeginn = async () => Date.now() - widmungAb;
+  await page.waitForTimeout(Math.max(0, 2200 - (await seitBeginn())));
+  const zuFruehDa = await bild.count();
+  await page.waitForTimeout(Math.max(0, 3700 - (await seitBeginn())));
+  const rechtzeitigDa = await bild.count();
+  console.log(
+    `Onkel-Tom-Bild: bei 2,2s ${zuFruehDa ? "schon da" : "noch nicht"}, ` +
+      `bei 3,7s ${rechtzeitigDa ? "da" : "fehlt"}`,
+  );
+  if (zuFruehDa) fruehesBild = "Das Bild von Onkel Tom kam schon vor seinem Namen";
+  if (!rechtzeitigDa) spaetesBild = "Das Bild von Onkel Tom kam nicht zu seinem Namen";
+}
+
+// Weiter wie gehabt: Begrüßung überspringen und Luise wählen.
+const weiter = page.getByRole("button", { name: /^Weiter$/ });
+if (await weiter.count()) await weiter.click({ force: true, timeout: 5000 });
+await page.waitForTimeout(500);
+await kindWaehlen(page, "Luise");
 await page.waitForTimeout(600);
 await page.getByRole("button", { name: /1\. Aufwachen/ }).click({ force: true });
 await page.waitForTimeout(1500);
@@ -81,7 +124,6 @@ await page.getByRole("button", { name: "Tim", exact: true }).click({ force: true
  * orange ist — und schnitt sich damit selbst das Lob ab. Dieser Test ist der
  * einzige, in dem der Ton wirklich läuft; nur hier ist das zu prüfen.
  */
-const weiter = page.getByRole("button", { name: /^Weiter$/ });
 // Zwei Sekunden Erfolgspause, dann das Lob — hier läuft es noch.
 await page.waitForTimeout(3500);
 const zuFrueh = await weiter.count();
@@ -102,6 +144,8 @@ for (const e of ton.ereignisse) {
 const fehler = [];
 console.log(`\nHöchste Zahl gleichzeitig laufender Audios: ${ton.maxGleichzeitig}`);
 if (ton.maxGleichzeitig > 1) fehler.push(`${ton.maxGleichzeitig} Audios gleichzeitig`);
+if (fruehesBild) fehler.push(fruehesBild);
+if (spaetesBild) fehler.push(spaetesBild);
 if (zuFrueh) fehler.push("Weiter-Knopf war schon da, während der Sprecher redete");
 if (!spaeterDa) fehler.push("Weiter-Knopf kam auch nach dem Sprechen nicht");
 

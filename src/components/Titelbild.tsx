@@ -6,6 +6,20 @@ import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
 import { NAMEN, SCHENKER, SCHENKER_BILD } from "@/lib/kinder";
 
+/**
+ * Ab wann in widmung.webm der Name fällt.
+ *
+ * Ausgemessen an der Aufnahme: „Für Luise, Maya und Marla." läuft von 0,1 bis
+ * 2,54s, dann eine Atempause, und ab 3,20s kommt „Von Onkel Tom." bis 4,01s;
+ * danach läuft die Aufnahme noch bis 4,80s still aus. Der Wink kommt knapp
+ * davor, weil das Bild eine gute Zehntelsekunde zum Aufspringen braucht und
+ * der Browser nur etwa viermal je Sekunde über den Stand berichtet.
+ *
+ * Wird die Widmung neu eingesprochen, gehört diese Zahl nachgemessen — der
+ * Tontest wacht darüber und meldet sich, wenn das Bild nicht mehr passt.
+ */
+const NAME_AB = 3.0;
+
 /** Startbildschirm mit dem Buchcover. */
 export function Titelbild({
   onSpielen,
@@ -58,18 +72,22 @@ export function Titelbild({
     void (async () => {
       await voice.speak("titel");
       /*
-       * „Für Luise, Maya und Marla. Von Onkel Tom." — und genau dazu sein
-       * Bild. Der Name allein sagt einem Dreijährigen nichts; das Gesicht
-       * schon. Es kommt mit dem Satz und geht mit ihm wieder.
+       * „Für Luise, Maya und Marla. Von Onkel Tom." — und genau zum Namen
+       * sein Bild. Der Name allein sagt einem Dreijährigen nichts; das
+       * Gesicht schon.
        *
        * Nur wenn die Widmung wirklich gesprochen wird: Ohne Aufnahme bliebe
        * sie still, und das Bild würde bloß kurz aufblitzen.
        */
       const widmungKommt = schenkerBild && (await voice.gibtEsAufnahme("widmung"));
       if (abgebrochen.current) return;
-      if (widmungKommt) setZeigtSchenker(true);
       // Die Widmung bleibt still, bis eine Aufnahme dafür vorliegt.
-      await voice.speakWennAufgenommen("widmung");
+      await voice.speakWennAufgenommen(
+        "widmung",
+        widmungKommt
+          ? { abSekunde: NAME_AB, dann: () => setZeigtSchenker(true) }
+          : undefined,
+      );
       if (abgebrochen.current) return;
       setZeigtSchenker(false);
       await voice.speak("willkommen");

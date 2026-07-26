@@ -5,7 +5,7 @@ import { STATIONS, type StationId } from "@/lib/stations";
 import * as voice from "@/lib/voice";
 import * as sfx from "@/lib/sfx";
 import { TonKnopf } from "./TonKnopf";
-import type { Kind } from "@/lib/kinder";
+import { tagTitel, type Kind } from "@/lib/kinder";
 
 /** Wo die elf Stationen auf der Bühne liegen (in Prozent). */
 const PLAETZE: { x: number; y: number }[] = [
@@ -101,7 +101,7 @@ export function Tageskarte({
             className="rounded-full px-[4cqw] py-[1cqw] text-[3.4cqw] font-semibold shadow-sm"
             style={{ background: "rgba(255,255,255,0.85)", color: "#4f5c4c" }}
           >
-            {kind ? `${kind.name}s Tag mit Tim` : "Tims Tag"}
+            {tagTitel(kind)}
           </h2>
         </div>
 

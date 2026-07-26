@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { STATIONS, nextStation, type StationId } from "@/lib/stations";
-import { useProgress, useHatJemandGespielt, fortschrittVon } from "@/lib/progress";
+import { useProgress, useHatJemandGespielt } from "@/lib/progress";
 import { kindFinden, type Kind } from "@/lib/kinder";
 import * as voice from "@/lib/voice";
 
@@ -111,7 +111,6 @@ export function Spiel({ schenkerBild = false }: { schenkerBild?: boolean }) {
             <WerSpielt
               onGewaehlt={kindGewaehlt}
               onZurueck={() => setAnsicht("titel")}
-              fortschritt={fortschrittVon}
             />
           )}
 

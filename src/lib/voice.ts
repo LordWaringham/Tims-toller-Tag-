@@ -150,7 +150,20 @@ function speakWithTts(text: string): Promise<void> {
   });
 }
 
-function playRecording(file: string): Promise<void> {
+/**
+ * Ein Wink mitten in der Aufnahme.
+ *
+ * Für Dinge, die zu einem bestimmten Wort gehören und nicht zum ganzen Satz —
+ * etwa das Bild von Onkel Tom, das genau dann kommen soll, wenn sein Name
+ * fällt, und nicht schon zu „Für Luise, Maya und Marla".
+ */
+export interface Zwischenruf {
+  /** Sekunde in der Aufnahme, ab der gemeldet wird. */
+  abSekunde: number;
+  dann: () => void;
+}
+
+function playRecording(file: string, zwischenruf?: Zwischenruf): Promise<void> {
   return new Promise((resolve) => {
     let audio = cache.get(file);
     if (!audio) {
@@ -160,6 +173,18 @@ function playRecording(file: string): Promise<void> {
     }
     current = audio;
     audio.currentTime = 0;
+    // Die Elemente werden wiederverwendet — ein alter Wink darf nicht bleiben.
+    audio.ontimeupdate = null;
+    if (zwischenruf) {
+      const el = audio;
+      let schon = false;
+      el.ontimeupdate = () => {
+        if (schon || el.currentTime < zwischenruf.abSekunde) return;
+        schon = true;
+        el.ontimeupdate = null;
+        zwischenruf.dann();
+      };
+    }
     audio.onended = () => resolve();
     audio.onerror = () => resolve();
     audio.play().catch(() => resolve());
@@ -195,7 +220,10 @@ export async function speak(id: LineId): Promise<void> {
  * klingt wie ein Fremdkörper; lieber schweigt das Spiel, bis die Aufnahme da
  * ist. Die IDs stehen trotzdem in SPRECHTEXTE.md und im Aufnahmestudio.
  */
-export async function speakWennAufgenommen(id: string): Promise<void> {
+export async function speakWennAufgenommen(
+  id: string,
+  zwischenruf?: Zwischenruf,
+): Promise<void> {
   if (muted) return;
   /*
    * Die Nummer wird vor dem Warten gezogen, genau wie in speak().
@@ -210,7 +238,7 @@ export async function speakWennAufgenommen(id: string): Promise<void> {
   const datei = m[id];
   if (!datei) return;
   stopSpeaking();
-  return playRecording(datei);
+  return playRecording(datei, zwischenruf);
 }
 
 /**

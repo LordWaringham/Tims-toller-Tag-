@@ -13,7 +13,7 @@ und heißt genau wie die ID — also `s03-erdbeeren.mp3` für die ID `s03-erdbee
 Es müssen nicht alle Sätze sein. Für jeden Satz ohne Aufnahme springt die deutsche
 Stimme des Geräts ein, also kann man jederzeit ein paar Sätze nachreichen.
 
-Insgesamt: **93 Sätze**.
+Insgesamt: **94 Sätze**.
 
 ## Allgemein
 
@@ -43,6 +43,7 @@ Insgesamt: **93 Sätze**.
 | `hallo-luise.mp3` | Hallo Luise! Schön, dass du da bist. |
 | `hallo-maya.mp3` | Hallo Maya! Schön, dass du da bist. |
 | `hallo-marla.mp3` | Hallo Marla! Schön, dass du da bist. |
+| `hallo-gast.mp3` | Hallo! Schön, dass du da bist. |
 | `widmung.mp3` | Für Luise, Maya und Marla. Von Onkel Tom. |
 | `finale-stolz.mp3` | Du hast Tim durch den ganzen Tag begleitet. Schau dir deine Sticker an! |
 | `tim-piraten.mp3` | Weißt du was? Im Kindergarten ist Tim bei den Piraten. Piraten bauen die höchsten Türme! |
